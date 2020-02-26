@@ -6,16 +6,16 @@ const defSquare = (size, divs) => i => ({
 })
 
 function drawGrid (ctx, SIZE, DIVS = 10) {
-  // ctx.font = '40px serif'
-  // ctx.textAlign = 'center'
+  ctx.font = '40px serif'
+  ctx.textAlign = 'center'
 
-  // for (let j = 1; j < 11; j++) {
-  //   ctx.fillText(String.fromCharCode(64 + j), 20 + (j*51), 35)
-  // }
+  for (let j = 1; j < 11; j++) {
+    ctx.fillText(String.fromCharCode(64 + j), 20 + (j*51), 35)
+  }
 
-  // for (let j = 1; j < 11; j++) {
-  //   ctx.fillText(j, 25, 32 + (j*51))
-  // }
+  for (let j = 1; j < 11; j++) {
+    ctx.fillText(j, 25, 32 + (j*51))
+  }
 
   const getSquare = defSquare(SIZE, DIVS)
 
