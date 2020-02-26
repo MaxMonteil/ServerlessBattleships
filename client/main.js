@@ -15,9 +15,9 @@ class Board {
     this.ctx.font = '40px sans-serif'
     this.ctx.textAlign = 'center'
 
-    for (let j = 1; j < 11; j++) {
-      this.ctx.fillText(String.fromCharCode(64 + j), 20 + (j * 51), 35)
-      this.ctx.fillText(j, 25, 32 + (j * 51))
+    for (let i = 1; i < 11; i++) {
+      this.ctx.fillText(String.fromCharCode(64 + i), 20 + (i * 51), 35)
+      this.ctx.fillText(i, 25, 32 + (i * 51))
     }
 
     this.ctx.fillStyle = 'lightblue'
@@ -34,18 +34,18 @@ class Board {
   // curried function to manage generating each square's data
   _defSquare (size, divs) {
       return i => ({
-        x: ((i/divs>>0) * size/divs) + size/divs, // ((interger division) * col width) + top offset
-        y: ((i%divs) * size/divs) + size/divs, // ((remainder) * row width) + left offset
-        width: size/divs,
-        height: size/divs,
+        x: ((i / divs >> 0) * size / divs) + size / divs, // ((interger division) * col width) + top offset
+        y: ((i % divs) * size / divs) + size / divs, // ((remainder) * row width) + left offset
+        width: size / divs,
+        height: size / divs,
       })
   }
 
   _handleClick (e) {
     for (let i = 0; i < this.squares.length; i++) {
-      if(this.squares[i].wasClicked(e)) {
+      if (this.squares[i].wasClicked(e)) {
         this.squares[i].recolor(this.ctx, 'red')
-        break;
+        break
       }
     }
   }
