@@ -5,9 +5,10 @@ class Board {
 
     this.canvas = document.querySelector(canvasID)
     this.ctx = canvas.getContext('2d')
+    this.canvasBounds = canvas.getBoundingClientRect()
     canvas.addEventListener('click', e => this._handleClick(e))
 
-    this.squareDef = this._defSquare(this.size, this.divisions)
+    this.squareDef = this._defSquare(size, divisions)
     this.squares = []
   }
 
@@ -34,16 +35,18 @@ class Board {
   // curried function to manage generating each square's data
   _defSquare (size, divs) {
       return i => ({
-        x: ((i / divs >> 0) * size / divs) + size / divs, // ((interger division) * col width) + top offset
-        y: ((i % divs) * size / divs) + size / divs, // ((remainder) * row width) + left offset
+        x: ((i % divs) * size / divs) + size / divs, // ((remainder) * row width) + left offset
+        y: ((i / divs >> 0) * size / divs) + size / divs, // ((interger division) * col width) + top offset
         width: size / divs,
         height: size / divs,
       })
   }
 
   _handleClick (e) {
+    const adjustedX = e.clientX - this.canvasBounds.x
+    const adjustedY = e.clientY - this.canvasBounds.y
     for (let i = 0; i < this.squares.length; i++) {
-      if (this.squares[i].wasClicked(e)) {
+      if (this.squares[i].wasClicked({ clientX: adjustedX, clientY: adjustedY })) {
         this.squares[i].recolor(this.ctx, 'red')
         break
       }
@@ -63,8 +66,8 @@ class Square {
   }
 
   wasClicked ({ clientX, clientY }) {
-    return clientX > this.x && clientX < (this.x + this.width) &&
-    clientY > this.y && clientY < (this.y + this.height)
+    return clientX > this.x && clientX <= (this.x + this.width) &&
+    clientY > this.y && clientY <= (this.y + this.height)
   }
 
   recolor (ctx, fill = 'lightblue', stroke = 'white') {
