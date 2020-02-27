@@ -1,39 +1,83 @@
-const defSquare = (size, divs) => i => ({
-  x: ((i/divs>>0) * size/divs) + size/divs, // ((interger division) * col width) + top offset
-  y: ((i%divs) * size/divs) + size/divs, // ((remainder) * row width) + left offset
-  width: size/divs,
-  height: size/divs,
-})
+class Board {
+  constructor (size, divisions, canvasID) {
+    this.size = size
+    this.divisions = divisions
 
-function drawGrid (ctx, SIZE, DIVS = 10) {
-  ctx.font = '40px serif'
-  ctx.textAlign = 'center'
+    this.canvas = document.querySelector(canvasID)
+    this.ctx = canvas.getContext('2d')
+    canvas.addEventListener('click', e => this._handleClick(e))
 
-  for (let j = 1; j < 11; j++) {
-    ctx.fillText(String.fromCharCode(64 + j), 20 + (j*51), 35)
+    this.squareDef = this._defSquare(this.size, this.divisions)
+    this.squares = []
   }
 
-  for (let j = 1; j < 11; j++) {
-    ctx.fillText(j, 25, 32 + (j*51))
+  drawBoard () {
+    this.ctx.font = '40px sans-serif'
+    this.ctx.textAlign = 'center'
+
+    for (let i = 1; i < 11; i++) {
+      this.ctx.fillText(String.fromCharCode(64 + i), 20 + (i * 51), 35)
+      this.ctx.fillText(i, 25, 32 + (i * 51))
+    }
+
+    this.ctx.fillStyle = 'lightblue'
+    this.ctx.strokeStyle = 'white'
+    for (let i = 0; i < 100; i++) {
+      const s = new Square(i, this.squareDef)
+      this.ctx.fillRect(s.x, s.y, s.width, s.height)
+      this.ctx.strokeRect(s.x, s.y, s.width, s.height)
+
+      this.squares.push(s)
+    }
   }
 
-  const getSquare = defSquare(SIZE, DIVS)
+  // curried function to manage generating each square's data
+  _defSquare (size, divs) {
+      return i => ({
+        x: ((i / divs >> 0) * size / divs) + size / divs, // ((interger division) * col width) + top offset
+        y: ((i % divs) * size / divs) + size / divs, // ((remainder) * row width) + left offset
+        width: size / divs,
+        height: size / divs,
+      })
+  }
 
-  ctx.fillStyle = 'lightblue'
-  ctx.strokeStyle = 'white'
-  for (let i = 0; i < 100; i++) {
-    const { x, y, width, height } = getSquare(i)
-    ctx.fillRect(x, y, width, height)
-    ctx.strokeRect(x, y, width, height)
+  _handleClick (e) {
+    for (let i = 0; i < this.squares.length; i++) {
+      if (this.squares[i].wasClicked(e)) {
+        this.squares[i].recolor(this.ctx, 'red')
+        break
+      }
+    }
   }
 }
-function run () {
-  const canvas = document.querySelector('#canvas')
-  const ctx = canvas.getContext('2d')
-  const SIZE = 500
-  drawGrid(ctx, SIZE)
 
-  canvas.addEventListener('click', e => console.log(e.clientX, e.clientY))
+class Square {
+  constructor (i, getSquare) {
+    this.id = i
+
+    const { x, y, width, height } = getSquare(i)
+    this.x = x
+    this.y = y
+    this.width = width
+    this.height = height
+  }
+
+  wasClicked ({ clientX, clientY }) {
+    return clientX > this.x && clientX < (this.x + this.width) &&
+    clientY > this.y && clientY < (this.y + this.height)
+  }
+
+  recolor (ctx, fill = 'lightblue', stroke = 'white') {
+    ctx.fillStyle = fill
+    ctx.strokeStyle = stroke
+    ctx.fillRect(this.x, this.y, this.width, this.height)
+    ctx.strokeRect(this.x, this.y, this.width, this.height)
+  }
+}
+
+function run () {
+  const board = new Board(500, 10, '#canvas')
+  board.drawBoard()
 }
 
 window.onload = run
