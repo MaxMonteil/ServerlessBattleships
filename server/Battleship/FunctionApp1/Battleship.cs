@@ -22,7 +22,7 @@ namespace FunctionApp1 {
             //We need to somehow get their username input
             string myName = "MyName";
 
-            CloudStorageAccount storageAccount = CloudStorageAccount.Parse("DefaultEndpointsProtocol=https;AccountName=storageaccounthomew9ac6;AccountKey=2a1O7EJ3pisSJ6JkR9zPYMc68aqd/WR+GdPZm5bG76EnfUMQfgfzgIgnGFPhiN0LaFsYVBlj7NCg62eQMqWi0g==;EndpointSuffix=core.windows.net");
+            CloudStorageAccount storageAccount = CloudStorageAccount.Parse("//Enter String here");
             CloudQueueClient queueClient = storageAccount.CreateCloudQueueClient();
             CloudQueue queue = queueClient.GetQueueReference("myqueue");
             queue.CreateIfNotExists();
