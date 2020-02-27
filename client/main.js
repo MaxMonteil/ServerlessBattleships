@@ -1,3 +1,21 @@
+class CanvasBitmap {
+  constructor (bitString) {
+    const MAX_BITWISE_LENGTH = 32
+    this.bitString = bitString
+    this.segments = this._divideBitString(bitString, MAX_BITWISE_LENGTH)
+  }
+
+  _divideBitString (bitString, length) {
+    let result = [], i = 0
+    while (true)  {
+        result.push(bitString.substring(i * length, (i * length) + length))
+        if (result[result.length - 1].length < l) break
+        i++
+    }
+    return result
+  }
+}
+
 class Board {
   constructor (size, divisions, canvasID) {
     this.size = size
