@@ -32,21 +32,38 @@ export default class Bitmap {
   }
 
   // Bitmap operations
-  // We always assume A.length === B.length
+
+  // NOT is a unary operator and doesn't need padding
+  static NOT = A => new Bitmap(A.segments.map(segment => ((~ parseInt(segment, 2) >>> 0).toString(2))))
+
   static OR = (A, B) => Bitmap._bitwise(A, B, ((A, B) => A | B))
   static AND = (A, B) => Bitmap._bitwise(A, B, ((A, B) => A & B))
   static XOR = (A, B) => Bitmap._bitwise(A, B, ((A, B) => A ^ B))
-  // Same as before but we use >>> to get a non-negative/unsigned result
-  static NOT = A => new Bitmap(A.segments.map(segment => ((~ parseInt(segment, 2) >>> 0).toString(2))))
 
   static _bitwise (A, B, op) {
+    // Bitwise ops do not have an order but the bitmaps may have different lengths,
+    // to help with padding we make sure B always represents the shorter one
+    if (B.segments.length > A.segments.length) {
+      let tmp = B
+      B = A
+      A = tmp
+    }
+
     return new Bitmap(A.segments.map((segment, i) => {
+      // if the segment is empty return a 0 string of matching length
+      const paddedB = typeof B.segments[i] === 'undefined' ? '0'.repeat(segment.length)
+        // if the B segment is shorter, pad it to match the A segment
+        : B.segments[i].length < segment.length ? B.segments[i].padEnd(segment.length, '0')
+        // no padding needed
+        : B.segments[i]
+
       // the strings need to be parsed into integers for bitwise operations
-      return op(parseInt(segment, 2), parseInt(B.segments[i], 2))
-        // then put back as a string for storage
+      // then we use >>> to get a non-negative/unsigned result
+      return (op(parseInt(segment, 2), parseInt(paddedB, 2)) >>> 0)
+        // now we turn the result back into a string for storage,
         .toString(2)
-        // but this trims upto the most significant bit
-        // so we pad it back to it's orginal length
+        // but this trims the result down to the most significant bit
+        // so we pad it back to its orginal length
         .padStart(segment.length, '0')
     }))
   }
