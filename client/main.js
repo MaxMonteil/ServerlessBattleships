@@ -1,15 +1,31 @@
 class CanvasBitmap {
   constructor (bitString) {
     const MAX_BITWISE_LENGTH = 32
-    this.bitString = bitString
-    this.segments = this._divideBitString(bitString, MAX_BITWISE_LENGTH)
+
+    if (typeof bitString === 'string') {
+      this.segments = this._divideBitString(bitString, MAX_BITWISE_LENGTH)
+    } else if (Array.isArray(bitString)) {
+      this.segments = bitString
+    } else {
+      throw new Error('Invalid Bitstring')
+    }
+  }
+
+  get bitString () {
+    return this.segments.join('')
+  }
+
+  get bits () {
+    return this.bitString.split('').map(bit => parseInt(bit))
   }
 
   _divideBitString (bitString, length) {
+    // bit operations work on a maximum of 32 bits so this divides the
+    // 100 char length string into arrays of size <= 32
     let result = [], i = 0
     while (true)  {
         result.push(bitString.substring(i * length, (i * length) + length))
-        if (result[result.length - 1].length < l) break
+        if (result[result.length - 1].length < length) break
         i++
     }
     return result
@@ -41,12 +57,20 @@ class Board {
 
     this.ctx.fillStyle = 'lightblue'
     this.ctx.strokeStyle = 'white'
-    for (let i = 0; i < 100; i++) {
+    for (let i = 0; i < this.size; i++) {
       const s = new Square(i, this.squareDef)
       this.ctx.fillRect(s.x, s.y, s.width, s.height)
       this.ctx.strokeRect(s.x, s.y, s.width, s.height)
 
       this.squares.push(s)
+    }
+  }
+
+  drawBitmap (bitmap, color) {
+    const bits = bitmap.bits
+
+    for (let i = 0; i < this.size; i++) {
+      if (bits[i]) this.squares[i].recolor(this.ctx, color)
     }
   }
 
@@ -63,7 +87,7 @@ class Board {
   _handleClick (e) {
     const adjustedX = e.clientX - this.canvasBounds.x
     const adjustedY = e.clientY - this.canvasBounds.y
-    for (let i = 0; i < this.squares.length; i++) {
+    for (let i = 0; i < this.size; i++) {
       if (this.squares[i].wasClicked({ clientX: adjustedX, clientY: adjustedY })) {
         this.squares[i].recolor(this.ctx, 'red')
         break
@@ -99,6 +123,9 @@ class Square {
 function run () {
   const board = new Board(500, 10, '#canvas')
   board.drawBoard()
+
+  let test = new CanvasBitmap('0'.repeat(70) + '11' + '0'.repeat(28))
+  board.drawBitmap(test, 'black')
 }
 
 window.onload = run
