@@ -1,16 +1,16 @@
 import Square from './Square.js'
 
 export default class Board {
-  constructor (size, divisions, canvasID) {
-    this.size = size
+  constructor (dimensions, divisions, canvasID) {
     this.divisions = divisions
+    this.size = divisions ** 2
 
     this.canvas = document.querySelector(canvasID)
     this.ctx = canvas.getContext('2d')
     this.canvasBounds = canvas.getBoundingClientRect()
     canvas.addEventListener('click', e => this._handleClick(e))
 
-    this.squareDef = this._defSquare(size, divisions)
+    this.squareDef = this._defSquare(dimensions, divisions)
     this.squares = []
   }
 
@@ -43,12 +43,12 @@ export default class Board {
   }
 
   // curried function to manage generating each square's data
-  _defSquare (size, divs) {
+  _defSquare (dimensions, divs) {
       return i => ({
-        x: ((i % divs) * size / divs) + size / divs, // ((remainder) * row width) + left offset
-        y: ((i / divs >> 0) * size / divs) + size / divs, // ((interger division) * col width) + top offset
-        width: size / divs,
-        height: size / divs,
+        x: ((i % divs) * dimensions / divs) + dimensions / divs, // ((remainder) * row width) + left offset
+        y: ((i / divs >> 0) * dimensions / divs) + dimensions / divs, // ((interger division) * col width) + top offset
+        width: dimensions / divs,
+        height: dimensions / divs,
       })
   }
 
