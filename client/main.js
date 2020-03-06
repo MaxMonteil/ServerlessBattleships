@@ -4,7 +4,7 @@ class Bitmap {
 
     if (typeof bitString === 'string') {
       this.segments = this._divideBitString(bitString, MAX_BITWISE_LENGTH)
-    } else if (Array.isArray(bitString) && typeof bitString === 'string') {
+    } else if (Array.isArray(bitString) && typeof bitString[0] === 'string') {
       this.segments = bitString
     } else {
       throw new Error('Invalid Bitstring. Type must be Array<String> or String')
