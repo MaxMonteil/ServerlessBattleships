@@ -88,7 +88,8 @@ export default class Board {
     const adjustedY = e.clientY - this.canvasBounds.y
     for (let i = 0; i < this.size; i++) {
       if (this.squares[i].wasClicked({ clientX: adjustedX, clientY: adjustedY })) {
-        this.squares[i].recolor(this.ctx, 'red')
+
+        this.canvas.dispatchEvent(new CustomEvent('boardClicked', { detail: i }))
         break
       }
     }
