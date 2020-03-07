@@ -34,11 +34,42 @@ export default class Board {
     }
   }
 
-  drawBitmap (bitmap, color) {
+  // This function draws a smaller or equal sized square
+  // on top of another
+  drawBitmap (bitmap, color, start = 0, options = {}) {
     const bits = bitmap.bits
+    const mapSize = Math.sqrt(bits.length)
+    // the indices of the smaller square on the board need an additional
+    // offset for each row
+    const rowStep = this.divisions - mapSize
 
-    for (let i = 0; i < this.size; i++) {
-      if (bits[i]) this.squares[i].recolor(this.ctx, color)
+    let indices = []
+    for (let i = 0; i < bits.length; i++) {
+      if (bits[i]) {
+        // this gets us the indices of the smaller square relative to the bigger one
+        indices.push(start + i + (rowStep * Math.floor(i / mapSize)))
+      }
+    }
+
+    // avoid extra calcs when it makes sense (both maps the same size, not based on user input)
+    if (options.skipCheck) {
+      for (const i of indices) this.squares[i].recolor(this.ctx, color)
+      return true
+    }
+
+    // Out of bounds check along both axes
+    const yCheck = indices[indices.length - 1] < this.size
+    // along the x axis we need to check for horizontal alignment,
+    // for horizontal we make sure the first and last indices are on the same row
+    const xCheck = ((indices[0] / this.divisions) >> 0) === ((indices[indices.length - 1] / this.divisions) >> 0) ||
+      // for vertical we make sure the indices increment by row lenght (aka division)
+      indices.every(i => ((i - indices[0]) % this.divisions) === 0)
+
+    if (yCheck && xCheck) {
+      for (const i of indices) this.squares[i].recolor(this.ctx, color)
+      return true
+    } else {
+      return false
     }
   }
 
