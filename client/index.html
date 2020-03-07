@@ -17,5 +17,19 @@
 </head>
 <body>
     <canvas id="canvas" width="550" height="550"></canvas>
+
+    <form id="ship_select_form">
+        <label for="ship_select">Choose ship to place</label>
+        <br>
+        <select name="ship_select" id="ship_select">
+            <option value="Carrier">Carrier (5)</option>
+            <option value="Battleship">Battleship (4)</option>
+            <option value="Destroyer">Destroyer (3)</option>
+            <option value="Submarine">Submarine (3)</option>
+            <option value="Patrol">Patrol Boat (2)</option>
+        </select>
+
+        <button type="submit">Choose</button>
+    </form>
 </body>
 </html>
