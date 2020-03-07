@@ -1,9 +1,11 @@
 import Square from './Square.js'
 
 export default class Board {
-  constructor (dimensions, divisions, canvasID) {
+  constructor (dimensions, divisions, background, canvasID) {
     this.divisions = divisions
     this.size = divisions ** 2
+
+    this.background = background
 
     this.canvas = document.querySelector(canvasID)
     this.ctx = canvas.getContext('2d')
@@ -23,7 +25,7 @@ export default class Board {
       this.ctx.fillText(i, 25, 32 + (i * 51))
     }
 
-    this.ctx.fillStyle = 'lightblue'
+    this.ctx.fillStyle = this.background
     this.ctx.strokeStyle = 'white'
     for (let i = 0; i < this.size; i++) {
       const s = new Square(i, this.squareDef)
@@ -67,9 +69,13 @@ export default class Board {
 
     if (yCheck && xCheck) {
       for (const i of indices) this.squares[i].recolor(this.ctx, color)
-      return true
     } else {
-      return false
+      this.squares[start].recolor(this.ctx, 'red')
+
+      const id = window.setTimeout(() => {
+        this.squares[start].recolor(this.ctx, this.background)
+        window.clearTimeout(id)
+      }, 200)
     }
   }
 
