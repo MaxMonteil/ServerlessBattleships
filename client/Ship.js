@@ -17,6 +17,8 @@ const ALIGN = {
 
 export default class Ship {
   constructor (size, alignment = ALIGN.HORIZONTAL) {
+    // top left square of the ship, useful for redrawing it
+    this.anchor
     this.size = size
     this.alignment = alignment in ALIGN
       ? alignment
