@@ -3,12 +3,14 @@ import Bitmap from './Bitmap.js'
 import Ship from './Ship.js'
 
 export default class Game {
-  constructor (dimensions, divisions, canvasID) {
+  constructor (dimensions, divisions, canvasID, orientationDisplay) {
     this.divisions = divisions
     this.size = divisions ** 2
     this.SEA_COLOR = 'lightblue'
 
     this.gameBoard = new Board(dimensions, divisions, this.SEA_COLOR, canvasID)
+
+    this.orientationDisplay = document.querySelector('#alignment')
 
     this.seaMap = new Bitmap('1'.repeat(this.size))
 
@@ -27,6 +29,10 @@ export default class Game {
     this.attackMap = new Bitmap('0'.repeat(100))
   }
 
+  updateOrientation () {
+    this.orientationDisplay.innerText = this.selectedShip.alignment.toLowerCase()
+  }
+
   clearBoard () {
     this.gameBoard.drawBitmap(this.seaMap, this.SEA_COLOR)
   }
@@ -34,6 +40,16 @@ export default class Game {
   getHits () { return Bitmap.AND(this.shipMap, this.attackMap) }
 
   getMiss () { return Bitmap.AND(Bitmap.NOT(this.shipMap), this.attackMap) }
+
+  rotateSelectedShip () {
+    if (this.selectedShip.anchor) {
+      // "erase" the ship
+      this.gameBoard.drawBitmap(this.selectedShip.bounds, this.SEA_COLOR, this.selectedShip.anchor, { skipCheck: true })
+      this.selectedShip.anchor = null
+    }
+    this.selectedShip.rotate()
+    this.updateOrientation()
+  }
 
   selectShip (target, selector = null) {
     if (target instanceof Ship) {
@@ -63,17 +79,6 @@ export default class Game {
   start () {
     this.gameBoard.drawBoard()
     this.selectShip(this.ships.Carrier)
-
-    // ROTATION
-    window.addEventListener('keydown', e => {
-      if (String.fromCharCode(e.keyCode) === 'R') {
-        if (this.selectedShip.anchor) {
-          // "erase" the ship
-          this.gameBoard.drawBitmap(this.selectedShip.bounds, this.SEA_COLOR, this.selectedShip.anchor, { skipCheck: true })
-          this.selectedShip.anchor = null
-        }
-        this.selectedShip.rotate()
-      }
-    })
+    this.updateOrientation()
   }
 }
