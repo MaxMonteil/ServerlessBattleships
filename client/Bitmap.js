@@ -1,6 +1,13 @@
 export default class Bitmap {
   constructor (bitString) {
     const MAX_BITWISE_LENGTH = 32
+    this.segments
+
+    this.update(bitString)
+  }
+
+  update (bitString) {
+    const MAX_BITWISE_LENGTH = 32
 
     if (typeof bitString === 'string') {
       this.segments = this._divideBitString(bitString, MAX_BITWISE_LENGTH)
