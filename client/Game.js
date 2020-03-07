@@ -6,10 +6,10 @@ export default class Game {
   constructor (dimensions, divisions, canvasID) {
     this.divisions = divisions
     this.size = divisions ** 2
-
-    this.gameBoard = new Board(dimensions, divisions, canvasID)
-
     this.SEA_COLOR = 'lightblue'
+
+    this.gameBoard = new Board(dimensions, divisions, this.SEA_COLOR, canvasID)
+
     this.seaMap = new Bitmap('1'.repeat(this.size))
 
     this.shipMap = new Bitmap('0'.repeat(100))
