@@ -28,4 +28,20 @@ export default class Ship {
     // This makes rotation equal to the transpose of the matrix
     this.bounds = new Bitmap('1'.repeat(size) + '0'.repeat(size ** 2 - size))
   }
+
+  rotate () {
+    let rotatedShip = [...this.bounds.bits]
+
+    // Since ships are exclusively the top row or left column
+    // of their bounds, rotation is the transpose of the ship's bounds
+    // So we can just switch the top row bits with the left column
+    // and skip the corner which doesn't move
+    for (let i = 1; i < this.size; i++) {
+      let tmp = rotatedShip[i]
+      rotatedShip[i] = rotatedShip[i * this.size]
+      rotatedShip[i * this.size] = tmp
+    }
+
+    this.bounds.update(rotatedShip.join(''))
+  }
 }
