@@ -70,12 +70,13 @@ export default class Board {
     if (yCheck && xCheck) {
       for (const i of indices) this.squares[i].recolor(this.ctx, color)
     } else {
+      // Flash the clicked square red when it is an invalid location
       this.squares[start].recolor(this.ctx, 'red')
 
       const id = window.setTimeout(() => {
         this.squares[start].recolor(this.ctx, this.background)
         window.clearTimeout(id)
-      }, 200)
+      }, 150)
     }
   }
 
