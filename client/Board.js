@@ -53,8 +53,8 @@ export default class Board {
 
     // avoid extra calcs when it makes sense (both maps the same size, not based on user input)
     if (options.skipCheck) {
-      for (const i of indices) this.squares[i].recolor(this.ctx, color)
-      return true
+      for (const i of indices) if (i < this.size) this.squares[i].recolor(this.ctx, color)
+      return
     }
 
     // Out of bounds check along both axes
