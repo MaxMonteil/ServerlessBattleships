@@ -43,7 +43,7 @@ export default class Ship {
       rotatedShip[i] = rotatedShip[i * this.size]
       rotatedShip[i * this.size] = tmp
     }
-
+    this.alignment = this.alignment === ALIGN.HORIZONTAL ? ALIGN.VERTICAL : ALIGN.HORIZONTAL
     this.bounds.update(rotatedShip.join(''))
   }
 }
