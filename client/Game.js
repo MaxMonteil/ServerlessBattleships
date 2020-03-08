@@ -33,10 +33,6 @@ export default class Game {
     this.orientationDisplay.innerText = this.selectedShip.alignment.toLowerCase()
   }
 
-  clearBoard () {
-    this.gameBoard.drawBitmap(this.seaMap, this.SEA_COLOR)
-  }
-
   getHits () { return Bitmap.AND(this.shipMap, this.attackMap) }
 
   getMiss () { return Bitmap.AND(Bitmap.NOT(this.shipMap), this.attackMap) }
