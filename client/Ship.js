@@ -20,6 +20,7 @@ export default class Ship {
     // top left square of the ship, useful for redrawing it
     this.anchor = null
     this.size = size
+    this.color = 'black'
     this.alignment = alignment in ALIGN
       ? alignment
       : ALIGN.HORIZONTAL

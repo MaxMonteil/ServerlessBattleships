@@ -10,11 +10,11 @@ export default class Game {
 
     this.gameBoard = new Board(dimensions, divisions, this.SEA_COLOR, canvasID)
 
-    this.orientationDisplay = document.querySelector('#alignment')
+    this.orientationDisplay = document.querySelector(orientationDisplay)
 
     this.seaMap = new Bitmap('1'.repeat(this.size))
 
-    this.shipMap = new Bitmap('0'.repeat(100))
+    this.shipMap = new Bitmap('0'.repeat(this.size))
 
     this.ships = {
       Carrier: new Ship(5),
@@ -26,7 +26,7 @@ export default class Game {
     this.selectedShip = this.ships.Carrier
     this.selectionCleanup = null
 
-    this.attackMap = new Bitmap('0'.repeat(100))
+    this.attackMap = new Bitmap('0'.repeat(this.size))
   }
 
   updateOrientation () {
@@ -64,7 +64,7 @@ export default class Game {
       // "erase" the ship by drawing ocean over it
       if (ship.anchor !== null) this.gameBoard.drawBitmap(ship.bounds, this.SEA_COLOR, ship.anchor, { skipCheck: true })
       ship.anchor = square
-      this.gameBoard.drawBitmap(ship.bounds, 'black', square)
+      this.gameBoard.drawBitmap(ship.bounds, ship.color, square)
     }
 
     this.gameBoard.canvas.addEventListener('boardClicked', handleShipPlacement)
