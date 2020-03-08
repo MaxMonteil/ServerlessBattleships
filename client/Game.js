@@ -62,7 +62,7 @@ export default class Game {
   placeShip (ship) {
     const handleShipPlacement = ({ detail: square }) => {
       // "erase" the ship by drawing ocean over it
-      if (ship.anchor) this.gameBoard.drawBitmap(ship.bounds, this.SEA_COLOR, ship.anchor, { skipCheck: true })
+      if (ship.anchor !== null) this.gameBoard.drawBitmap(ship.bounds, this.SEA_COLOR, ship.anchor, { skipCheck: true })
       ship.anchor = square
       this.gameBoard.drawBitmap(ship.bounds, 'black', square)
     }
