@@ -37,8 +37,14 @@ export default class Bitmap {
     return result
   }
 
-  // Bitmap operations
+  // Booleans
+  static TRUE = size => new Bitmap('1'.repeat(size))
+  static FALSE = size => new Bitmap('0'.repeat(size))
 
+  // Comparison
+  static EQ = (A, B) => A.bitString === B.bitString
+
+  // Bitmap operations
   // NOT is a unary operator and doesn't need padding
   static NOT = A => new Bitmap(A.bits.map(bit => bit ? 0 : 1).join(''))
 
