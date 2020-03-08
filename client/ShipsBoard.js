@@ -83,7 +83,6 @@ export default class ShipsBoard extends Board {
     }
   }
 
-  // TODO comment
   placeShip (ship, start) {
     const shipOffset = Ship.getOffsetIndices(ship, start, this.gridDimensions)
 
@@ -95,18 +94,23 @@ export default class ShipsBoard extends Board {
       // for horizontal we check that each ship square is on the same row
       shipOffset.map(i => (i / this.gridDimensions) >> 0).every((value, _, arr) => value === arr[0])
 
-    if (!yValid || !xValid) return false
+    const paddedShip = Ship.padBounds(ship, shipOffset, this.size)
+
+    // Check for collisions against other ships but allow if ship overlaps with itself
+    const collisions = !Bitmap.EQ(Bitmap.AND(new Bitmap(this.removeShip(ship, false)), paddedShip), Bitmap.FALSE(this.size))
+
+    if (!yValid || !xValid || collisions) return false
 
     // this ship is already somewhere on the map
     if (ship.anchor !== null) this.shipMap.update(this.removeShip(ship))
 
     ship.anchor = start
-    return Bitmap.OR(this.shipMap, Ship.padBounds(ship, shipOffset, this.size)).bitString
+    return Bitmap.OR(this.shipMap, paddedShip).bitString
   }
 
-  removeShip (ship) {
+  removeShip (ship, removeAnchor = true) {
     const padShip = Ship.padBounds(ship, Ship.getOffsetIndices(ship, ship.anchor, this.gridDimensions), this.size)
-    ship.anchor = null
+    if (removeAnchor) ship.anchor = null
     return Bitmap.AND(this.shipMap, Bitmap.NOT(padShip)).bitString
   }
 
