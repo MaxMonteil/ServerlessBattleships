@@ -31,13 +31,17 @@ export default class ShipsBoard extends Board {
     // ROTATION
     window.addEventListener('keydown', e => {
       if (String.fromCharCode(e.keyCode) === 'R') this.rotateSelectedShip()
+      if (String.fromCharCode(e.keyCode) === 'S') console.log(this.shipMap.bitString)
     })
 
     this.selectShip(this.ships.Carrier)
   }
 
   rotateSelectedShip () {
-    if (this.selectedShip.anchor !== null) this.shipMap.update(this.removeShip(this.selectedShip))
+    if (this.selectedShip.anchor !== null) {
+      this.shipMap.update(this.removeShip(this.selectedShip))
+      this.drawShips()
+    }
 
     this.selectedShip.rotate()
     this.updateOrientation()
