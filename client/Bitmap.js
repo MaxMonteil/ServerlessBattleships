@@ -2,6 +2,7 @@ export default class Bitmap {
   constructor (bitString) {
     const MAX_BITWISE_LENGTH = 32
     this.segments
+    this.length
 
     this.update(bitString)
   }
@@ -10,21 +11,19 @@ export default class Bitmap {
     const MAX_BITWISE_LENGTH = 32
 
     if (typeof bitString === 'string') {
+      this.length = bitString.length
       this.segments = this._divideBitString(bitString, MAX_BITWISE_LENGTH)
     } else if (Array.isArray(bitString) && typeof bitString[0] === 'string') {
+      this.length = bitString.join('').length
       this.segments = bitString
     } else {
       throw new Error('Invalid Bitstring. Type must be Array<String> or String')
     }
   }
 
-  get bitString () {
-    return this.segments.join('')
-  }
+  get bitString () { return this.segments.join('') }
 
-  get bits () {
-    return this.bitString.split('').map(bit => parseInt(bit))
-  }
+  get bits () { return this.bitString.split('').map(bit => parseInt(bit)) }
 
   _divideBitString (bitString, length) {
     // bit operations work on a maximum of 32 bits so this divides the
@@ -41,7 +40,7 @@ export default class Bitmap {
   // Bitmap operations
 
   // NOT is a unary operator and doesn't need padding
-  static NOT = A => new Bitmap(A.segments.map(segment => ((~ parseInt(segment, 2) >>> 0).toString(2))))
+  static NOT = A => new Bitmap(A.bits.map(bit => bit ? 0 : 1).join(''))
 
   static OR = (A, B) => Bitmap._bitwise(A, B, ((A, B) => A | B))
   static AND = (A, B) => Bitmap._bitwise(A, B, ((A, B) => A & B))

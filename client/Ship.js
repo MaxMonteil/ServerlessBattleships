@@ -47,4 +47,27 @@ export default class Ship {
     this.alignment = this.alignment === ALIGN.HORIZONTAL ? ALIGN.VERTICAL : ALIGN.HORIZONTAL
     this.bounds.update(rotatedShip.join(''))
   }
+
+  static getOffsetIndices (ship, anchor, gridDimensions) {
+    const shipBits = ship.bounds.bits
+
+    // the indices of the smaller square on the board need an additional
+    // offset for each row
+    const rowOffset = gridDimensions - ship.size
+
+    // this gets us the indices of the ship's squares relative to the board
+    let overlay = []
+    for (let i = 0; i < ship.bounds.length; i++) {
+      if (shipBits[i]) overlay.push(anchor + i + (rowOffset * ((i / ship.size) >> 0)))
+    }
+
+    return overlay
+  }
+
+  static padBounds (ship, offsetIndices, totalSize) {
+    // Place the ship on a larger bitmap
+    const result = new Array(totalSize).fill(0)
+    offsetIndices.forEach(index => result[index] = 1)
+    return new Bitmap(result.join(''))
+  }
 }
