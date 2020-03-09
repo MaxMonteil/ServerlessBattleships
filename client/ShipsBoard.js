@@ -53,7 +53,8 @@ export default class ShipsBoard extends Board {
     } else {
       const selection = new FormData(target).get(selector)
       this.selectedShip = this.ships[selection]
-    if (this.shipWatcher !== null) this.canvas.removeEventListener(CLICK_EVENT, this.shipWatcher)
+
+      if (this.shipWatcher !== null) this.canvas.removeEventListener(CLICK_EVENT, this.shipWatcher)
     }
 
     this.watchShip(this.selectedShip)
