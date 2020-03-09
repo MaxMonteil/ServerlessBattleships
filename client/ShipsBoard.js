@@ -89,9 +89,8 @@ export default class ShipsBoard extends Board {
 
     // Check for out-of-bounds along both axes
     const yValid = Math.max(...shipOffset) < this.size
-    // TODO: might not need vertical check since width of ship === 1
-    // if the ship is vertical, we make sure the squares are separated by row length (aka division)
-    const xValid = shipOffset.every(i => ((i - shipOffset[0]) % this.gridDimensions) === 0) ||
+    // if the ship is vertical, we don't need any checks since the width is 1 square
+    const xValid = ship.alignment === 'VERTICAL' ||
       // for horizontal we check that each ship square is on the same row
       shipOffset.map(i => (i / this.gridDimensions) >> 0).every((value, _, arr) => value === arr[0])
 
