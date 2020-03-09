@@ -63,9 +63,9 @@ export default class ShipsBoard extends Board {
 
   watchShip (ship) {
     const shipWatcher = ({ detail: square }) => {
-      const validPlacement = this.placeShip(ship, square)
-      if (validPlacement) {
-        this.shipMap.update(validPlacement)
+      const { placementValid, map } = this.placeShip(ship, square)
+      if (placementValid) {
+        this.shipMap.update(map)
         this.drawShips()
       } else this.squares[square].flash('red')
     }
@@ -100,13 +100,16 @@ export default class ShipsBoard extends Board {
     // Check for collisions against other ships but allow if ship overlaps with itself
     const collisions = !Bitmap.EQ(Bitmap.AND(new Bitmap(this.removeShip(ship, false)), paddedShip), Bitmap.FALSE(this.size))
 
-    if (!yValid || !xValid || collisions) return false
+    if (!yValid || !xValid || collisions) return { placementValid: false, map: null }
 
     // this ship is already somewhere on the map
     if (ship.anchor !== null) this.shipMap.update(this.removeShip(ship))
 
     ship.anchor = start
-    return Bitmap.OR(this.shipMap, paddedShip).bitString
+    return {
+      placementValid: true,
+      map: Bitmap.OR(this.shipMap, paddedShip).bitString,
+    }
   }
 
   removeShip (ship, removeAnchor = true) {
