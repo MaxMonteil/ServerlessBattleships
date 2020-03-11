@@ -1,4 +1,4 @@
-import Game from './Game.js'
+import Game from './classes/Game.js'
 
 function run () {
   const game = new Game(500, 10, '#canvas',
