@@ -12,10 +12,10 @@ export default class ShipsBoard extends Board {
 
     this.ships = {
       Carrier: new Ship(5),
-      // Battleship: new Ship(4),
-      // Destroyer: new Ship(3),
-      // Submarine: new Ship(3),
-      // Patrol: new Ship(2),
+      Battleship: new Ship(4),
+      Destroyer: new Ship(3),
+      Submarine: new Ship(3),
+      Patrol: new Ship(2),
     }
 
     this.selectedShip = null
@@ -25,6 +25,7 @@ export default class ShipsBoard extends Board {
 
     // Get reference to DOM elements
     this.window = window
+    this.shipBoardInputs = document.getElementById(options.shipBoardInputs)
     this.orientationDisplay = document.getElementById(options.orientationDisplay)
     this.shipSelectForm = document.forms[options.shipSelectForm]
     this.endShipPlacementForm = document.forms[options.endShipPlacementForm]
@@ -173,6 +174,9 @@ export default class ShipsBoard extends Board {
 
   _handlePlacementEnd (e) {
     e.preventDefault()
-    if (this.allShipsPlaced()) this.teardownListeners()
+    if (this.allShipsPlaced()) {
+      this.teardownListeners()
+      this.shipBoardInputs.style.display = 'none'
+    }
   }
 }
