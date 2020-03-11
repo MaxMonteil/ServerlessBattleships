@@ -5,46 +5,75 @@ import Ship from './Ship.js'
 const CLICK_EVENT = 'shipsBoardClicked'
 
 export default class ShipsBoard extends Board {
-  constructor (pixelDimensions, gridDimensions, fill, stroke, canvasID, orientationDisplayID, shipSelectFormID) {
+  constructor (pixelDimensions, gridDimensions, fill, stroke, canvasID, options) {
     super(pixelDimensions, gridDimensions, fill, stroke, canvasID, CLICK_EVENT)
-
-    this.shipSelectForm = document.forms[shipSelectFormID]
-    this.orientationDisplay = document.querySelector(orientationDisplayID)
-
-    this.shipSelectForm.addEventListener('submit', e => this._handleShipSelection(e))
 
     this.shipMap = new Bitmap('0'.repeat(this.size))
 
     this.ships = {
       Carrier: new Ship(5),
-      Battleship: new Ship(4),
-      Destroyer: new Ship(3),
-      Submarine: new Ship(3),
-      Patrol: new Ship(2),
+      // Battleship: new Ship(4),
+      // Destroyer: new Ship(3),
+      // Submarine: new Ship(3),
+      // Patrol: new Ship(2),
     }
 
     this.selectedShip = null
-    this.shipWatcher = null
 
     // SETUP
+    this.lock = false
 
-    // ROTATION
-    window.addEventListener('keydown', e => {
-      if (String.fromCharCode(e.keyCode) === 'R') this.rotateSelectedShip()
-      if (String.fromCharCode(e.keyCode) === 'S') console.log(this.shipMap.bitString)
-    })
+    // Get reference to DOM elements
+    this.window = window
+    this.orientationDisplay = document.getElementById(options.orientationDisplay)
+    this.shipSelectForm = document.forms[options.shipSelectForm]
+    this.endShipPlacementForm = document.forms[options.endShipPlacementForm]
+
+    this.setupListeners()
+  }
+
+  setupListeners () {
+    this.listeners = {
+      window: {
+        event: 'keydown',
+        callback: e => this._handleShipRotation(e),
+      },
+      shipSelectForm: {
+        event: 'submit',
+        callback: e => this._handleShipSelection(e),
+      },
+      endShipPlacementForm: {
+        event: 'submit',
+        callback: e => this._handlePlacementEnd(e),
+      },
+      canvas: {
+        event: CLICK_EVENT,
+        callback: null
+      }
+    }
+
+    for (const target in this.listeners) {
+      this[target].addEventListener(this.listeners[target].event, this.listeners[target].callback)
+    }
 
     this.selectShip(this.ships.Carrier)
   }
 
-  rotateSelectedShip () {
-    if (this.selectedShip.anchor !== null) {
-      this.shipMap.update(this.removeShip(this.selectedShip))
-      this.drawShips()
+  teardownListeners (target = null) {
+    if (target !== null) {
+      this[target].removeEventListener(this.listeners[target].event, this.listeners[target].callback)
+      return
     }
 
-    this.selectedShip.rotate()
-    this.updateOrientation()
+    for (const target in this.listeners) {
+      this[target].removeEventListener(this.listeners[target].event, this.listeners[target].callback)
+    }
+
+    this.lock = true
+  }
+
+  allShipsPlaced () {
+    return Object.values(this.ships).every(ship => ship.anchor !== null)
   }
 
   selectShip (target, selector = null) {
@@ -54,7 +83,7 @@ export default class ShipsBoard extends Board {
       const selection = new FormData(target).get(selector)
       this.selectedShip = this.ships[selection]
 
-      if (this.shipWatcher !== null) this.canvas.removeEventListener(CLICK_EVENT, this.shipWatcher)
+      if (this.listeners.canvas.callback !== null) this.teardownListeners('canvas')
     }
 
     this.watchShip(this.selectedShip)
@@ -71,8 +100,10 @@ export default class ShipsBoard extends Board {
     }
 
     this.canvas.addEventListener(CLICK_EVENT, shipWatcher)
-
-    this.shipWatcher = shipWatcher
+    this.listeners.canvas = {
+      event: CLICK_EVENT,
+      callback: shipWatcher,
+    }
   }
 
   drawShips () {
@@ -121,9 +152,27 @@ export default class ShipsBoard extends Board {
     this.orientationDisplay.innerText = this.selectedShip.alignment.toLowerCase()
   }
 
+  _handleShipRotation (e) {
+    if (String.fromCharCode(e.keyCode) !== 'R') return
+
+    // The ship is present on the board somewhere, remove it before rotating
+    if (this.selectedShip.anchor !== null) {
+      this.shipMap.update(this.removeShip(this.selectedShip))
+      this.drawShips()
+    }
+
+    this.selectedShip.rotate()
+    this.updateOrientation()
+  }
+
   _handleShipSelection (e) {
       e.preventDefault()
       this.selectShip(e.target, 'ship_select')
       this.updateOrientation()
+  }
+
+  _handlePlacementEnd (e) {
+    e.preventDefault()
+    if (this.allShipsPlaced()) this.teardownListeners()
   }
 }

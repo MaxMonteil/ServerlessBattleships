@@ -2,7 +2,7 @@ import ShipsBoard from './ShipsBoard.js'
 import Bitmap from './Bitmap.js'
 
 export default class Game {
-  constructor (pixelDimensions, gridDimensions, canvasID, orientationDisplayID, shipSelectFormID) {
+  constructor (pixelDimensions, gridDimensions, canvasID, shipBoardData) {
 
     this.ShipsBoard = new ShipsBoard(
       pixelDimensions,
@@ -10,8 +10,7 @@ export default class Game {
       'lightblue',
       'white',
       canvasID,
-      orientationDisplayID,
-      shipSelectFormID,
+      shipBoardData,
     )
 
     this.attackMap = new Bitmap('0'.repeat(this.size))
