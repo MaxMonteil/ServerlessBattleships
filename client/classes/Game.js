@@ -2,7 +2,6 @@ import ApiService from '../api.js'
 
 import ShipsBoard from './ShipsBoard.js'
 import AttacksBoard from './AttacksBoard.js'
-import Bitmap from './Bitmap.js'
 
 const GRID_DIMENSIONS = 10
 
@@ -27,20 +26,7 @@ export default class Game {
       'black',
       attacksBoardData,
     )
-    this.attackSection = document.querySelector(attacksBoardData.section)
-    this.attackMap = new Bitmap('0'.repeat(this.size))
   }
-
-  async initPlayer () {
-    const playerID = await this.api.getPlayerId()
-    if (!playerID) return false
-
-    return playerID
-  }
-
-  getHits () { return Bitmap.AND(this.shipMap, this.attackMap) }
-
-  getMiss () { return Bitmap.AND(Bitmap.NOT(this.shipMap), this.attackMap) }
 
   async start () {
     try {
@@ -49,9 +35,22 @@ export default class Game {
       this.gameID = gameID
       this.playerID = playerID
 
+      console.log(gameID, playerID)
+
       this.ShipsBoard.start(this.AttacksBoard.getPlacementEndCallback())
     } catch (e) {
       console.error(e.message)
     }
+  }
+
+  getHits () { return Bitmap.AND(this.ShipsBoard.shipMap, this.AttacksBoard.attackMap) }
+
+  getMiss () { return Bitmap.AND(Bitmap.NOT(this.ShipsBoard.shipMap), this.AttacksBoard.attackMap) }
+
+  async initPlayer () {
+    const playerID = await this.api.getPlayerId()
+    if (!playerID) return false
+
+    return playerID
   }
 }
