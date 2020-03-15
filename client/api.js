@@ -26,6 +26,14 @@ export default class ApiService {
     return await this._postRequest('shipmap', shipMap)
   }
 
+  async getAttacksMap () {
+    return await this._getRequest('attack')
+  }
+
+  async sendAttack (attackMap) {
+    return await this._postRequest('attack', attackMap)
+  }
+
   async _getRequest (resource) {
     let url = this._getEndpoint(resource)
     url.search = new URLSearchParams(this.credentials).toString()
