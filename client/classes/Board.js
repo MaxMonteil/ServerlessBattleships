@@ -10,9 +10,9 @@ export default class Board {
     this.stroke = stroke
 
     this.canvas = document.querySelector(canvasID)
-    this.ctx = canvas.getContext('2d')
-    this.canvasBounds = canvas.getBoundingClientRect()
-    canvas.addEventListener('click', e => this._handleClick(e))
+    this.ctx = this.canvas.getContext('2d')
+    this.canvasBounds = this.canvas.getBoundingClientRect()
+    this.canvas.addEventListener('click', e => this._handleClick(e))
 
     this.squares = []
 
@@ -20,14 +20,6 @@ export default class Board {
   }
 
   drawBoard () {
-    this.ctx.font = '40px sans-serif'
-    this.ctx.textAlign = 'center'
-
-    for (let i = 1; i < 11; i++) {
-      this.ctx.fillText(String.fromCharCode(64 + i), 20 + (i * 51), 35)
-      this.ctx.fillText(i, 25, 32 + (i * 51))
-    }
-
     this.ctx.fillStyle = this.fill
     this.ctx.strokeStyle = this.stroke
     for (let i = 0; i < this.size; i++) {

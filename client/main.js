@@ -13,7 +13,7 @@ const shipBoardData = {
 }
 
 function run () {
-  const game = new Game(500, 10, '#canvas', shipBoardData, SERVER)
+  const game = new Game(500, 10, '#ships_canvas', shipBoardData, SERVER)
 
   game.start()
 }

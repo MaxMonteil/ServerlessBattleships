@@ -4,8 +4,8 @@ export default class Square {
 
     this.ctx = ctx
 
-    this.x = ((i % divs) * dimensions / divs) + dimensions / divs // ((remainder) * row width) + left offset
-    this.y = ((i / divs >> 0) * dimensions / divs) + dimensions / divs // ((interger division) * col width) + top offset
+    this.x = ((i % divs) * dimensions / divs) // ((remainder) * row width)
+    this.y = ((i / divs >> 0) * dimensions / divs) // ((interger division) * col width)
 
     this.width = dimensions / divs
     this.height = dimensions / divs

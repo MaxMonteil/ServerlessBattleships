@@ -13,8 +13,8 @@ export default class Game {
       this.api,
       pixelDimensions,
       gridDimensions,
-      'lightblue',
       'white',
+      'black',
       canvasID,
       shipBoardData,
     )
