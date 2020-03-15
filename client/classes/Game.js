@@ -43,10 +43,6 @@ export default class Game {
     }
   }
 
-  getHits () { return Bitmap.AND(this.ShipsBoard.shipMap, this.AttacksBoard.attackMap) }
-
-  getMiss () { return Bitmap.AND(Bitmap.NOT(this.ShipsBoard.shipMap), this.AttacksBoard.attackMap) }
-
   async initPlayer () {
     const playerID = await this.api.getPlayerId()
     if (!playerID) return false
