@@ -22,7 +22,7 @@ def new_player():
 
 
 def next_turn(gameID):
-    games[gameID]["turn"] = 0 if games[gameID]["turn"] == 1 else 1
+    games[gameID]["turn"] = int(not games[gameID]["turn"])
 
 
 def get_waiting_game():
@@ -72,7 +72,7 @@ def api_attack():
             games[gameID]["players"][playerID]["attack"] = request.json
             next_turn(gameID)
 
-            return jsonify({"endpoint": request.base_url}), 201
+            return jsonify(games[gameID]["players"][int(not playerID)]["shipmap"]), 201
         else:
             return jsonify({"message": "Not player's turn"}), 300
 
@@ -82,7 +82,7 @@ def api_poll():
     gameID = request.args["game"]
     playerID = int(request.args["player"])
 
-    return jsonify(games[gameID]["turn"] == playerID)
+    return jsonify(games[gameID]["turn"] == playerID), 200
 
 
 @app.after_request
