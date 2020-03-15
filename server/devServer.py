@@ -21,25 +21,29 @@ def new_player():
     }
 
 
+def next_turn(gameID):
+    games[gameID]["turn"] = 0 if games[gameID]["turn"] == 1 else 1
+
+
 def get_waiting_game():
     if len(lobby) == 0:
-        return None
+        gameID = str(uuid4())[:8]
+        games[gameID] = {
+            "turn": 0,
+            "players": [new_player(), new_player()],
+        }
+        lobby.append(gameID)
+
+        return gameID, Player.ONE
     else:
-        return lobby.pop()
+        gameID = lobby.pop()
+
+        return gameID, Player.TWO
 
 
 @app.route("/api/v1/game", methods=["GET"])
 def api_lobby():
-    gameID = get_waiting_game()
-
-    if gameID is None:
-        gameID = str(uuid4())[:8]
-        lobby.append(gameID)
-        games[gameID] = [new_player()]
-        playerID = Player.ONE
-    else:
-        games[gameID].append(new_player())
-        playerID = Player.TWO
+    gameID, playerID = get_waiting_game()
 
     return jsonify({"game": gameID, "player": playerID.value}), 200
 
@@ -50,9 +54,9 @@ def api_shipmap():
     playerID = int(request.args["player"])
 
     if request.method == "GET":
-        return jsonify(games[gameID][playerID]["shipmap"]), 200
+        return jsonify(games[gameID]["players"][playerID]["shipmap"]), 200
     else:
-        games[gameID][playerID]["shipmap"] = request.json
+        games[gameID]["players"][playerID]["shipmap"] = request.json
         return jsonify({"endpoint": request.base_url}), 201
 
 
@@ -62,10 +66,23 @@ def api_attack():
     playerID = int(request.args["player"])
 
     if request.method == "GET":
-        return jsonify(games[gameID][playerID]["attack"]), 200
+        return jsonify(games[gameID]["players"][playerID]["attack"]), 200
     else:
-        games[gameID][playerID]["attack"] = request.json
-        return jsonify({"endpoint": request.base_url}), 201
+        if games[gameID]["turn"] == playerID:
+            games[gameID]["players"][playerID]["attack"] = request.json
+            next_turn(gameID)
+
+            return jsonify({"endpoint": request.base_url}), 201
+        else:
+            return jsonify({"message": "Not player's turn"}), 300
+
+
+@app.route("/api/v1/poll", methods=["GET"])
+def api_poll():
+    gameID = request.args["game"]
+    playerID = int(request.args["player"])
+
+    return jsonify(games[gameID]["turn"] == playerID)
 
 
 @app.after_request
