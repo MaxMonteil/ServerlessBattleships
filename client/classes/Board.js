@@ -31,8 +31,9 @@ export default class Board {
   }
 
   _handleClick (e) {
-    const adjustedX = e.clientX - this.canvasBounds.x
-    const adjustedY = e.clientY - this.canvasBounds.y
+    const { x, y } = this.canvas.getBoundingClientRect()
+    const adjustedX = e.clientX - x
+    const adjustedY = e.clientY - y
 
     for (let i = 0; i < this.size; i++) {
       if (this.squares[i].wasClicked({ clientX: adjustedX, clientY: adjustedY })) {
