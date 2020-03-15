@@ -1,23 +1,33 @@
 import ApiService from '../api.js'
 
 import ShipsBoard from './ShipsBoard.js'
+import AttacksBoard from './AttacksBoard.js'
 import Bitmap from './Bitmap.js'
 
+const GRID_DIMENSIONS = 10
+
 export default class Game {
-  constructor (pixelDimensions, gridDimensions, shipBoardData, serverInfo) {
+  constructor (shipBoardData, attacksBoardData, serverInfo) {
     this.playerID = ''
 
     this.api = new ApiService(serverInfo)
 
     this.ShipsBoard = new ShipsBoard(
       this.api,
-      pixelDimensions,
-      gridDimensions,
+      GRID_DIMENSIONS,
       'white',
       'black',
       shipBoardData,
     )
 
+    this.AttacksBoard = new AttacksBoard(
+      this.api,
+      GRID_DIMENSIONS,
+      'white',
+      'black',
+      attacksBoardData,
+    )
+    this.attackSection = document.querySelector(attacksBoardData.section)
     this.attackMap = new Bitmap('0'.repeat(this.size))
   }
 
@@ -39,9 +49,7 @@ export default class Game {
       this.gameID = gameID
       this.playerID = playerID
 
-      console.log(this.gameID, this.playerID)
-
-      this.ShipsBoard.start()
+      this.ShipsBoard.start(this.AttacksBoard.getPlacementEndCallback())
     } catch (e) {
       console.error(e.message)
     }

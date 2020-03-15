@@ -12,7 +12,7 @@
     <h1>Battleships</h1>
 
     <section id="ships_board">
-        <div id="ships_grid">
+        <div id="ships_grid" class="game_grid">
             <span></span>
             <div>1</div>
             <div>2</div>
@@ -36,7 +36,7 @@
             <div>I</div>
             <div>J</div>
 
-            <canvas id="ships_canvas" width="500" height="500"></canvas>
+            <canvas id="ships_canvas" width="300" height="300"></canvas>
         </div>
 
         <div id="ships_board_info">
@@ -54,13 +54,42 @@
                 <button type="submit">Choose</button>
             </form>
 
-            <h3>Press the R key to change the ship's orientation</h3>
+            <h3>Press R to rotate the selected ship</h3>
             <p>Orientation: <span id="alignment">Horizontal</span></p>
 
             <form id="ship_board_form">
-                <h2>Finish placing ships</h2>
+                <h3>Finish placing ships</h3>
                 <button type="submit">Done</button>
             </form>
+        </div>
+    </section>
+
+    <section id="attacks_board">
+        <div id="attacks_grid" class="game_grid">
+            <span></span>
+            <div>1</div>
+            <div>2</div>
+            <div>3</div>
+            <div>4</div>
+            <div>5</div>
+            <div>6</div>
+            <div>7</div>
+            <div>8</div>
+            <div>9</div>
+            <div>10</div>
+
+            <div class="letters">A</div>
+            <div>B</div>
+            <div>C</div>
+            <div>D</div>
+            <div>E</div>
+            <div>F</div>
+            <div>G</div>
+            <div>H</div>
+            <div>I</div>
+            <div>J</div>
+
+            <canvas id="attacks_canvas" width="500" height="500"></canvas>
         </div>
     </section>
 </body>

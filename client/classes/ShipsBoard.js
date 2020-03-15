@@ -5,8 +5,8 @@ import Ship from './Ship.js'
 const CLICK_EVENT = 'ships-board-clicked'
 
 export default class ShipsBoard extends Board {
-  constructor (api, pixelDimensions, gridDimensions, fill, stroke, options) {
-    super(pixelDimensions, gridDimensions, fill, stroke, options.canvas, CLICK_EVENT)
+  constructor (api, gridDimensions, fill, stroke, options) {
+    super(options.size, gridDimensions, fill, stroke, options.canvas, CLICK_EVENT)
 
     this.api = api
 
@@ -22,6 +22,8 @@ export default class ShipsBoard extends Board {
 
     this.selectedShip = null
 
+    this.placementEndCallback = null
+
     // SETUP
     // Get reference to DOM elements
     this.window = window
@@ -31,9 +33,10 @@ export default class ShipsBoard extends Board {
     this.endShipPlacementForm = document.forms[options.endShipPlacementForm]
   }
 
-  start () {
+  start (callback) {
     super.drawBoard()
     this.setupListeners()
+    this.placementEndCallback = callback
   }
 
   setupListeners () {
@@ -190,6 +193,7 @@ export default class ShipsBoard extends Board {
 
       this.teardownListeners()
       this.hideBoardInputs()
+      this.placementEndCallback()
     }
   }
 }

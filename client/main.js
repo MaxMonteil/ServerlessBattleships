@@ -6,6 +6,7 @@ const SERVER = {
 }
 
 const shipBoardData = {
+  size: 300,
   canvas: '#ships_canvas',
   shipBoardInputs: 'ships_board_info',
   orientationDisplay: 'alignment',
@@ -13,9 +14,14 @@ const shipBoardData = {
   endShipPlacementForm: 'ship_board_form'
 }
 
+const attacksBoardData = {
+  size: 500,
+  canvas: '#attacks_canvas',
+  section: '#attacks_board'
+}
+
 function run () {
-  new Game(500, 10, shipBoardData, SERVER)
-    .start()
+  new Game(shipBoardData, attacksBoardData, SERVER).start()
 }
 
 window.onload = run
