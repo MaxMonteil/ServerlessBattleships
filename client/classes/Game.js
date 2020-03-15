@@ -4,7 +4,7 @@ import ShipsBoard from './ShipsBoard.js'
 import Bitmap from './Bitmap.js'
 
 export default class Game {
-  constructor (pixelDimensions, gridDimensions, canvasID, shipBoardData, serverInfo) {
+  constructor (pixelDimensions, gridDimensions, shipBoardData, serverInfo) {
     this.playerID = ''
 
     this.api = new ApiService(serverInfo)
@@ -15,7 +15,6 @@ export default class Game {
       gridDimensions,
       'white',
       'black',
-      canvasID,
       shipBoardData,
     )
 

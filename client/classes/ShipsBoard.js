@@ -5,8 +5,8 @@ import Ship from './Ship.js'
 const CLICK_EVENT = 'ships-board-clicked'
 
 export default class ShipsBoard extends Board {
-  constructor (api, pixelDimensions, gridDimensions, fill, stroke, canvasID, options) {
-    super(pixelDimensions, gridDimensions, fill, stroke, canvasID, CLICK_EVENT)
+  constructor (api, pixelDimensions, gridDimensions, fill, stroke, options) {
+    super(pixelDimensions, gridDimensions, fill, stroke, options.canvas, CLICK_EVENT)
 
     this.api = api
 
