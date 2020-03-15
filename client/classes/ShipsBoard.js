@@ -2,11 +2,15 @@ import Bitmap from './Bitmap.js'
 import Board from './Board.js'
 import Ship from './Ship.js'
 
-const CLICK_EVENT = 'shipsBoardClicked'
+const CLICK_EVENT = 'ships-board-clicked'
 
 export default class ShipsBoard extends Board {
-  constructor (pixelDimensions, gridDimensions, fill, stroke, canvasID, options) {
+  constructor (api, pixelDimensions, gridDimensions, fill, stroke, canvasID, options) {
     super(pixelDimensions, gridDimensions, fill, stroke, canvasID, CLICK_EVENT)
+
+    this.api = api
+
+    this.playerID = null
 
     this.shipMap = new Bitmap('0'.repeat(this.size))
 
@@ -21,15 +25,17 @@ export default class ShipsBoard extends Board {
     this.selectedShip = null
 
     // SETUP
-    this.lock = false
-
     // Get reference to DOM elements
     this.window = window
     this.shipBoardInputs = document.getElementById(options.shipBoardInputs)
     this.orientationDisplay = document.getElementById(options.orientationDisplay)
     this.shipSelectForm = document.forms[options.shipSelectForm]
     this.endShipPlacementForm = document.forms[options.endShipPlacementForm]
+  }
 
+  async start (playerID) {
+    super.drawBoard()
+    this.playerID = playerID
     this.setupListeners()
   }
 
@@ -69,12 +75,6 @@ export default class ShipsBoard extends Board {
     for (const target in this.listeners) {
       this[target].removeEventListener(this.listeners[target].event, this.listeners[target].callback)
     }
-
-    this.lock = true
-  }
-
-  allShipsPlaced () {
-    return Object.values(this.ships).every(ship => ship.anchor !== null)
   }
 
   selectShip (target, selector = null) {
@@ -94,6 +94,7 @@ export default class ShipsBoard extends Board {
   watchShip (ship) {
     const shipWatcher = ({ detail: square }) => {
       const { placementValid, map } = this.placeShip(ship, square)
+
       if (placementValid) {
         this.shipMap.update(map)
         this.drawShips()
@@ -104,15 +105,6 @@ export default class ShipsBoard extends Board {
     this.listeners.canvas = {
       event: CLICK_EVENT,
       callback: shipWatcher,
-    }
-  }
-
-  drawShips () {
-    const bits = this.shipMap.bits
-
-    for (let i = 0; i < this.shipMap.length; i++) {
-      if (bits[i]) this.squares[i].recolor(this.selectedShip.color)
-      else this.squares[i].recolor(this.fill)
     }
   }
 
@@ -149,8 +141,25 @@ export default class ShipsBoard extends Board {
     return Bitmap.AND(this.shipMap, Bitmap.NOT(padShip)).bitString
   }
 
+  drawShips () {
+    const bits = this.shipMap.bits
+
+    for (let i = 0; i < this.shipMap.length; i++) {
+      if (bits[i]) this.squares[i].recolor(this.selectedShip.color)
+      else this.squares[i].recolor(this.fill)
+    }
+  }
+
   updateOrientation () {
     this.orientationDisplay.innerText = this.selectedShip.alignment.toLowerCase()
+  }
+
+  hideBoardInputs () {
+    this.shipBoardInputs.style.display = 'none'
+  }
+
+  allShipsPlaced () {
+    return Object.values(this.ships).every(ship => ship.anchor !== null)
   }
 
   _handleShipRotation (e) {
@@ -167,16 +176,23 @@ export default class ShipsBoard extends Board {
   }
 
   _handleShipSelection (e) {
-      e.preventDefault()
-      this.selectShip(e.target, 'ship_select')
-      this.updateOrientation()
+    e.preventDefault()
+    this.selectShip(e.target, 'ship_select')
+    this.updateOrientation()
   }
 
-  _handlePlacementEnd (e) {
+  async _handlePlacementEnd (e) {
     e.preventDefault()
     if (this.allShipsPlaced()) {
+      let resp = await this.api.saveShips(this.shipMap.bitString, this.playerID)
+
+      if (!resp) {
+        console.error('Unable to save ship position to server')
+        return
+      }
+
       this.teardownListeners()
-      this.shipBoardInputs.style.display = 'none'
+      this.hideBoardInputs()
     }
   }
 }
