@@ -14,6 +14,10 @@ export default class ApiService {
     return this.credentials
   }
 
+  async pollForTurn () {
+    return await this._getRequest('poll')
+  }
+
   async getShipMap () {
     return await this._getRequest('shipmap')
   }
