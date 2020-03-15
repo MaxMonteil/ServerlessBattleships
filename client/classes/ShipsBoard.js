@@ -10,8 +10,6 @@ export default class ShipsBoard extends Board {
 
     this.api = api
 
-    this.playerID = null
-
     this.shipMap = new Bitmap('0'.repeat(this.size))
 
     this.ships = {
@@ -33,9 +31,8 @@ export default class ShipsBoard extends Board {
     this.endShipPlacementForm = document.forms[options.endShipPlacementForm]
   }
 
-  async start (playerID) {
+  start () {
     super.drawBoard()
-    this.playerID = playerID
     this.setupListeners()
   }
 
@@ -184,7 +181,7 @@ export default class ShipsBoard extends Board {
   async _handlePlacementEnd (e) {
     e.preventDefault()
     if (this.allShipsPlaced()) {
-      let resp = await this.api.saveShips(this.shipMap.bitString, this.playerID)
+      let resp = await this.api.saveShips(this.shipMap.bitString)
 
       if (!resp) {
         console.error('Unable to save ship position to server')
