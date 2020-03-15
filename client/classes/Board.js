@@ -11,7 +11,6 @@ export default class Board {
 
     this.canvas = document.querySelector(canvasID)
     this.ctx = this.canvas.getContext('2d')
-    this.canvasBounds = this.canvas.getBoundingClientRect()
     this.canvas.addEventListener('click', e => this._handleClick(e))
 
     this.squares = []
