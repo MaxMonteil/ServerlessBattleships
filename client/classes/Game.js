@@ -7,6 +7,7 @@ const GRID_DIMENSIONS = 10
 
 export default class Game {
   constructor (shipBoardData, attacksBoardData, serverInfo) {
+    this.gameID = ''
     this.playerID = ''
 
     this.api = new ApiService(serverInfo)
