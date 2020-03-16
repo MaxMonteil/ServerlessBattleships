@@ -17,10 +17,6 @@ export default class AttacksBoard extends Board {
     this.attackSection = document.querySelector(options.section)
   }
 
-  getPlacementEndCallback () {
-    return () => this.start()
-  }
-
   start () {
     this.attackSection.style.visibility = 'visible'
     super.drawBoard()
@@ -37,7 +33,7 @@ export default class AttacksBoard extends Board {
       this.drawMap(this.attackMap)
 
       this.resolveAttack(await this.api.sendAttack(map.bitString))
-      this.pollForTurn()
+      this.api.pollForTurn(() => console.log('It\'s your turn!'), { immediate: true })
     }
 
     this.canvas.addEventListener(CLICK_EVENT, playerAttack)
@@ -62,17 +58,5 @@ export default class AttacksBoard extends Board {
 
   getAttackAsMap (square) {
     return new Bitmap('0'.repeat(square) + '1' + '0'.repeat(this.size - (square + 1)))
-  }
-
-  pollForTurn (interval = 1000) {
-    setTimeout(async function poll () {
-      const playersTurn = await this.api.pollForTurn()
-
-      if (!playersTurn) {
-        setTimeout(poll.bind(this), interval)
-      } else {
-        console.log(`It's the turn of player ${this.api.credentials.player}`)
-      }
-    }.bind(this), interval)
   }
 }

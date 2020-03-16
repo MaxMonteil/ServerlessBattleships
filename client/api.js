@@ -14,14 +14,6 @@ export default class ApiService {
     return this.credentials
   }
 
-  async pollForTurn () {
-    return await this._getRequest('poll_turn')
-  }
-
-  async pollForReady () {
-    return await this._getRequest('poll_ready')
-  }
-
   async getShipMap () {
     return await this._getRequest('shipmap')
   }
@@ -36,6 +28,32 @@ export default class ApiService {
 
   async sendAttack (attackMap) {
     return await this._postRequest('attack', attackMap)
+  }
+
+  pollForTurn (successCallback, options) {
+    return this._pollService('poll_turn', successCallback, options)
+  }
+
+  pollForReady (successCallback, options) {
+    return this._pollService('poll_ready', successCallback, options)
+  }
+
+  _pollService (resource, successCallback, options) {
+    // The immediate option decides whether to start polling immediately
+    // or return the poll service function for use as a callback later
+    options = options || { immediate: false, interval: 1000 }
+
+    const pollFunction = () => setTimeout(async function poll () {
+      // Recursive setTimeout gives us more control than setInterval
+      if (!await this._getRequest(resource)) {
+        setTimeout(poll.bind(this), options.interval)
+      } else {
+        successCallback()
+      }
+    }.bind(this), options.interval)
+
+    if (options.immediate) pollFunction()
+    else return pollFunction
   }
 
   async _getRequest (resource) {
