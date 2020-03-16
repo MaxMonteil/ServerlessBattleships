@@ -77,12 +77,22 @@ def api_attack():
             return jsonify({"message": "Not player's turn"}), 300
 
 
-@app.route("/api/v1/poll", methods=["GET"])
-def api_poll():
+@app.route("/api/v1/poll_turn", methods=["GET"])
+def api_poll_turn():
     gameID = request.args["game"]
     playerID = int(request.args["player"])
 
     return jsonify(games[gameID]["turn"] == playerID), 200
+
+
+@app.route("/api/v1/poll_ready", methods=["GET"])
+def api_poll_ready():
+    gameID = request.args["game"]
+    playerID = int(request.args["player"])
+
+    return jsonify(
+        games[gameID]["players"][int(not playerID)]["shipmap"] is not None
+    ), 200
 
 
 @app.after_request

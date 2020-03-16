@@ -15,7 +15,11 @@ export default class ApiService {
   }
 
   async pollForTurn () {
-    return await this._getRequest('poll')
+    return await this._getRequest('poll_turn')
+  }
+
+  async pollForReady () {
+    return await this._getRequest('poll_ready')
   }
 
   async getShipMap () {
