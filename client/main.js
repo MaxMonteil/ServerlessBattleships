@@ -6,6 +6,7 @@ const SERVER = {
 }
 
 const detailsNodes = {
+  game: 'game_info',
   lobby: 'lobby',
   placementWait: 'placement_wait',
 }

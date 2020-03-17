@@ -29,6 +29,7 @@ export default class Game {
     )
 
     // SETUP
+    this.gameInfo = document.getElementById(detailsNodes.game)
     this.lobbyNode = document.getElementById(detailsNodes.lobby)
     this.placementWait = document.getElementById(detailsNodes.placementWait)
   }
@@ -40,7 +41,7 @@ export default class Game {
       this.gameID = gameID
       this.playerID = playerID
 
-      console.log(gameID, playerID)
+      this.gameInfo.innerHTML = `Game: <strong>${gameID}</strong> | Player: <strong>${playerID + 1}</strong>`
 
       this.api.pollForPlayers(() => this.placeShips(), { immediate: true })
     } catch (e) {
