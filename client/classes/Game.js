@@ -16,7 +16,7 @@ export default class Game {
       this.api,
       GRID_DIMENSIONS,
       'white',
-      'black',
+      'gray',
       shipBoardData,
     )
 
@@ -24,7 +24,7 @@ export default class Game {
       this.api,
       GRID_DIMENSIONS,
       'white',
-      'black',
+      'gray',
       attacksBoardData,
     )
 
