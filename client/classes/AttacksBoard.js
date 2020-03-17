@@ -30,7 +30,7 @@ export default class AttacksBoard extends Board {
 
       const map = this.getAttackAsMap(clickedSquare)
       this.attackMap.update(Bitmap.OR(this.attackMap, map).bitString)
-      this.drawMap(this.attackMap)
+      this.drawMap(map)
 
       this.resolveAttack(await this.api.sendAttack(map.bitString))
       this.api.pollForTurn(() => console.log('It\'s your turn!'), { immediate: true })
