@@ -30,6 +30,7 @@ def get_waiting_game():
         gameID = str(uuid4())[:8]
         games[gameID] = {
             "turn": 0,
+            "winner": None,
             "players": [new_player()],
         }
         lobby.append(gameID)
@@ -76,6 +77,18 @@ def api_attack():
             return jsonify(games[gameID]["players"][int(not playerID)]["shipmap"]), 201
         else:
             return jsonify({"message": "Not player's turn"}), 300
+
+
+@app.route("/api/v1/win", methods=["GET", "POST"])
+def api_game_won():
+    gameID = request.args["game"]
+    playerID = int(request.args["player"])
+
+    if request.method == "GET":
+        return jsonify(games[gameID]["winner"]), 200
+    else:
+        games[gameID]["winner"] = playerID
+        return jsonify({"endpoint": request.base_url}), 201
 
 
 @app.route("/api/v1/poll_players", methods=["GET"])
