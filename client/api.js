@@ -30,6 +30,14 @@ export default class ApiService {
     return await this._postRequest('attack', attackMap)
   }
 
+  async getWinStatus () {
+    return await this._getRequest('win')
+  }
+
+  async setWinStatus () {
+    return await this._postRequest('win')
+  }
+
   pollForPlayers (successCallback, options) {
     return this._pollService('poll_players', successCallback, options)
   }
