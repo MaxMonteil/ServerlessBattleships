@@ -26,6 +26,7 @@ const attacksBoardData = {
   size: 500,
   canvas: '#attacks_canvas',
   section: '#attacks_board',
+  turnDisplay: '#turn_display'
 }
 
 function run () {

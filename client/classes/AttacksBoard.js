@@ -9,17 +9,26 @@ export default class AttacksBoard extends Board {
 
     this.api = api
 
+    this.isTurn = false
+
     this.attackMap = new Bitmap('0'.repeat(this.size))
     this.hitMap = new Bitmap('0'.repeat(this.size))
     this.missMap = new Bitmap('0'.repeat(this.size))
 
     // SETUP
     this.attackSection = document.querySelector(options.section)
+    this.turnDisplay = document.querySelector(options.turnDisplay)
   }
 
   start () {
     this.attackSection.style.visibility = 'visible'
     super.drawBoard()
+    if (this.api.credentials.player === 0) {
+      this.setTurn(true)
+    } else {
+      this.setTurn(false)
+      this.api.pollForTurn(() => this.setTurn(true), { immediate: true })
+    }
 
     const playerAttack = async ({ detail: clickedSquare }) => {
       // Player already attacked this square
@@ -33,7 +42,9 @@ export default class AttacksBoard extends Board {
       this.drawMap(map)
 
       this.resolveAttack(await this.api.sendAttack(map.bitString))
-      this.api.pollForTurn(() => console.log('It\'s your turn!'), { immediate: true })
+      this.setTurn(false)
+
+      this.api.pollForTurn(() => this.setTurn(true), { immediate: true })
     }
 
     this.canvas.addEventListener(CLICK_EVENT, playerAttack)
@@ -58,5 +69,18 @@ export default class AttacksBoard extends Board {
 
   getAttackAsMap (square) {
     return new Bitmap('0'.repeat(square) + '1' + '0'.repeat(this.size - (square + 1)))
+  }
+
+  setTurn (isTurn) {
+    this.isTurn = isTurn
+
+    if (isTurn) {
+      this.turnDisplay.style.color = 'coral'
+      this.turnDisplay.innerText = 'It\'s your turn!'
+    } else {
+      this.turnDisplay.style.color = 'gray'
+      this.turnDisplay.innerText = 'Other player\'s turn'
+    }
+
   }
 }
