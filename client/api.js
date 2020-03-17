@@ -14,6 +14,20 @@ export default class ApiService {
     return this.credentials
   }
 
+  async endGame () {
+    let url = this._getEndpoint('end_game')
+    url.search = new URLSearchParams(this.credentials).toString()
+
+    const resp = await fetch(url, {
+      method: 'DELETE',
+      mode: 'cors',
+    })
+
+    if (!resp.ok) return Promise.resolve(null)
+
+    return resp.json()
+  }
+
   async getShipMap () {
     return await this._getRequest('shipmap')
   }

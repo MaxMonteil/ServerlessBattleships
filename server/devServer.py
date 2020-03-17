@@ -91,6 +91,14 @@ def api_game_won():
         return jsonify({"endpoint": request.base_url}), 201
 
 
+@app.route("/api/v1/end_game", methods=["DELETE"])
+def api_end_game():
+    gameID = request.args["game"]
+    games.pop(gameID, None)
+
+    return jsonify(True), 200
+
+
 @app.route("/api/v1/poll_players", methods=["GET"])
 def api_poll_players():
     """Check if the game has 2 players."""
@@ -126,6 +134,7 @@ def api_poll_turn():
 def add_header(response):
     response.headers['Access-Control-Allow-Origin'] = '*'
     response.headers['Access-Control-Allow-Headers'] = '*'
+    response.headers['Access-Control-Allow-Methods'] = '*'
     return response
 
 

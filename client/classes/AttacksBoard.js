@@ -70,6 +70,7 @@ export default class AttacksBoard extends Board {
 
           if (winnerID !== null && winnerID !== this.api.credentials.player) {
             this.finishGame(false)
+            await this.api.endGame()
           } else {
             this.setTurn(true)
           }
