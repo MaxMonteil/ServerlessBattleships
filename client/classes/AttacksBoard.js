@@ -10,6 +10,7 @@ export default class AttacksBoard extends Board {
     this.api = api
 
     this.isTurn = false
+    this.gameOver = false
 
     this.attackMap = new Bitmap('0'.repeat(this.size))
     this.hitMap = new Bitmap('0'.repeat(this.size))
@@ -30,24 +31,7 @@ export default class AttacksBoard extends Board {
       this.api.pollForTurn(() => this.setTurn(true), { immediate: true })
     }
 
-    const playerAttack = async ({ detail: clickedSquare }) => {
-      // Player already attacked this square
-      if (this.attackMap.bits[clickedSquare]) {
-        this.squares[clickedSquare].flash('red')
-        return
-      }
-
-      const map = this.getAttackAsMap(clickedSquare)
-      this.attackMap.update(Bitmap.OR(this.attackMap, map).bitString)
-      this.drawMap(map)
-
-      this.resolveAttack(await this.api.sendAttack(map.bitString))
-      this.setTurn(false)
-
-      this.api.pollForTurn(() => this.setTurn(true), { immediate: true })
-    }
-
-    this.canvas.addEventListener(CLICK_EVENT, playerAttack)
+    this.canvas.addEventListener(CLICK_EVENT, this.gameTurn())
   }
 
   drawMap (map, color = 'black') {
@@ -58,13 +42,69 @@ export default class AttacksBoard extends Board {
     }
   }
 
-  resolveAttack (enemyShipsString) {
-    const enemyShips = new Bitmap(enemyShipsString)
+  gameTurn () {
+    return async ({ detail: clickedSquare }) => {
+      // Player already attacked this square or it is not their turn
+      if (this.attackMap.bits[clickedSquare] || !this.isTurn) {
+        this.squares[clickedSquare].flash('red')
+        return
+      }
+
+      this.setTurn(false)
+
+      const map = this.getAttackAsMap(clickedSquare)
+      this.attackMap.update(Bitmap.OR(this.attackMap, map).bitString)
+      this.drawMap(map)
+
+      const enemyShips = new Bitmap(await this.api.sendAttack(map.bitString))
+      this.gameOver = this.attackHitOrMiss(enemyShips)
+
+      if (this.isGameWon(enemyShips)) {
+        this.gameOver = await this.finishGame(true)
+      }
+
+      if (!this.gameOver) {
+        console.log('about to pollForTurn')
+        this.api.pollForTurn(async () => {
+          const winnerID = await this.api.getWinStatus()
+
+          if (winnerID !== null && winnerID !== this.api.credentials.player) {
+            this.finishGame(false)
+          } else {
+            this.setTurn(true)
+          }
+        }, { immediate: true })
+      }
+    }
+  }
+
+  attackHitOrMiss (enemyShips) {
     this.hitMap.update(Bitmap.AND(enemyShips, this.attackMap).bitString)
     this.missMap.update(Bitmap.AND(Bitmap.NOT(enemyShips), this.attackMap).bitString)
 
     this.drawMap(this.hitMap, 'coral')
     this.drawMap(this.missMap, 'lightblue')
+  }
+
+  async finishGame (isWinner) {
+    if (isWinner) {
+      await this.api.setWinStatus()
+
+      this.drawMap(this.hitMap, 'mediumseagreen')
+      this.turnDisplay.style.color = 'mediumseagreen'
+      this.turnDisplay.innerText = 'You Won!'
+
+      return true
+    } else {
+      this.turnDisplay.style.color = 'indianred'
+      this.turnDisplay.innerText = 'You Lost...'
+
+      return false
+    }
+  }
+
+  isGameWon (enemyShips) {
+    return Bitmap.EQ(Bitmap.AND(enemyShips, this.attackMap), enemyShips)
   }
 
   getAttackAsMap (square) {
