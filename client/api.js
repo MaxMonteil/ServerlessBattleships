@@ -45,7 +45,7 @@ export default class ApiService {
   _pollService (resource, successCallback, options) {
     // The immediate option decides whether to start polling immediately
     // or return the poll service function for use as a callback later
-    options = options || { immediate: false, interval: 1000 }
+    options = { ...{ immediate: false, interval: 1000 }, ...options }
 
     const pollFunction = () => setTimeout(async function poll () {
       // Recursive setTimeout gives us more control than setInterval
