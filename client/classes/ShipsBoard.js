@@ -32,6 +32,7 @@ export default class ShipsBoard extends Board {
     this.orientationDisplay = document.getElementById(options.orientationDisplay)
     this.shipSelectForm = document.forms[options.shipSelectForm]
     this.endShipPlacementForm = document.forms[options.endShipPlacementForm]
+    this.placementWait = document.getElementById(options.placementWait)
   }
 
   start (callback) {
@@ -195,6 +196,7 @@ export default class ShipsBoard extends Board {
 
       this.teardownListeners()
       this.hideBoardInputs()
+      this.placementWait.style.display = 'block'
       this.placementEndCallback()
     }
   }

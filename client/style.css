@@ -51,6 +51,10 @@ canvas {
     text-transform: capitalize;
 }
 
+#placement_wait {
+    display: none;
+}
+
 #attacks_board {
     visibility: hidden;
     margin-top: -49px;

@@ -29,7 +29,8 @@ export default class Game {
     )
 
     // SETUP
-    this.lobbyNode = document.querySelector(detailsNodes.lobby)
+    this.lobbyNode = document.getElementById(detailsNodes.lobby)
+    this.placementWait = document.getElementById(detailsNodes.placementWait)
   }
 
   async start () {
@@ -50,10 +51,12 @@ export default class Game {
   placeShips () {
     // We use the api to get a polling callback for ships board to run when
     // the player finishes placing their ships
-    console.log(this.lobbyNode)
     this.lobbyNode.style.display = 'none'
 
-    const pollCallback = this.api.pollForReady(() => this.AttacksBoard.start())
+    const pollCallback = this.api.pollForReady(() => {
+      this.placementWait.style.display = 'none'
+      this.AttacksBoard.start()
+    })
     this.ShipsBoard.start(pollCallback)
   }
 }

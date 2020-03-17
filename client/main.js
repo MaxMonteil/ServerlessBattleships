@@ -6,7 +6,8 @@ const SERVER = {
 }
 
 const detailsNodes = {
-  lobby: '#lobby',
+  lobby: 'lobby',
+  placementWait: 'placement_wait',
 }
 
 const shipBoardData = {
@@ -16,7 +17,8 @@ const shipBoardData = {
   shipBoardInputs: 'ships_board_info',
   orientationDisplay: 'alignment',
   shipSelectForm:  'ship_select_form',
-  endShipPlacementForm: 'ship_board_form'
+  endShipPlacementForm: 'ship_board_form',
+  placementWait: 'placement_wait',
 }
 
 const attacksBoardData = {
