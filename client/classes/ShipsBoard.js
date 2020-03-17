@@ -27,6 +27,7 @@ export default class ShipsBoard extends Board {
     // SETUP
     // Get reference to DOM elements
     this.window = window
+    this.shipsSection = document.querySelector(options.section)
     this.shipBoardInputs = document.getElementById(options.shipBoardInputs)
     this.orientationDisplay = document.getElementById(options.orientationDisplay)
     this.shipSelectForm = document.forms[options.shipSelectForm]
@@ -34,6 +35,7 @@ export default class ShipsBoard extends Board {
   }
 
   start (callback) {
+    this.shipsSection.style.visibility = 'visible'
     super.drawBoard()
     this.setupListeners()
     this.placementEndCallback = callback

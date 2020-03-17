@@ -6,7 +6,7 @@ import AttacksBoard from './AttacksBoard.js'
 const GRID_DIMENSIONS = 10
 
 export default class Game {
-  constructor (shipBoardData, attacksBoardData, serverInfo) {
+  constructor (detailsNodes, shipBoardData, attacksBoardData, serverInfo) {
     this.gameID = ''
     this.playerID = ''
 
@@ -27,6 +27,9 @@ export default class Game {
       'black',
       attacksBoardData,
     )
+
+    // SETUP
+    this.lobbyNode = document.querySelector(detailsNodes.lobby)
   }
 
   async start () {
@@ -47,6 +50,9 @@ export default class Game {
   placeShips () {
     // We use the api to get a polling callback for ships board to run when
     // the player finishes placing their ships
+    console.log(this.lobbyNode)
+    this.lobbyNode.style.display = 'none'
+
     const pollCallback = this.api.pollForReady(() => this.AttacksBoard.start())
     this.ShipsBoard.start(pollCallback)
   }
