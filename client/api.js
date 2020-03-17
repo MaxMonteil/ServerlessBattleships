@@ -30,12 +30,16 @@ export default class ApiService {
     return await this._postRequest('attack', attackMap)
   }
 
-  pollForTurn (successCallback, options) {
-    return this._pollService('poll_turn', successCallback, options)
+  pollForPlayers (successCallback, options) {
+    return this._pollService('poll_players', successCallback, options)
   }
 
   pollForReady (successCallback, options) {
     return this._pollService('poll_ready', successCallback, options)
+  }
+
+  pollForTurn (successCallback, options) {
+    return this._pollService('poll_turn', successCallback, options)
   }
 
   _pollService (resource, successCallback, options) {

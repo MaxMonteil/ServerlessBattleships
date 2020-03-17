@@ -38,12 +38,16 @@ export default class Game {
 
       console.log(gameID, playerID)
 
-      // We use the api to get a polling callback for ships board to run when
-      // the player finishes placing their ships
-      const pollCallback = this.api.pollForReady(() => this.AttacksBoard.start())
-      this.ShipsBoard.start(pollCallback)
+      this.api.pollForPlayers(() => this.placeShips(), { immediate: true })
     } catch (e) {
       console.error(e.message)
     }
+  }
+
+  placeShips () {
+    // We use the api to get a polling callback for ships board to run when
+    // the player finishes placing their ships
+    const pollCallback = this.api.pollForReady(() => this.AttacksBoard.start())
+    this.ShipsBoard.start(pollCallback)
   }
 }
