@@ -29,6 +29,16 @@ export default class Board {
     }
   }
 
+  drawMap (map, style, erase = false) {
+    const { fill, stroke } = { fill: this.fill, stroke: this.stroke, ...style }
+    const bits = map.bits
+
+    for (let i = 0; i < bits.length; i++) {
+      if (bits[i]) this.squares[i].recolor(fill, stroke)
+      if(!bits[i] && erase) this.squares[i].recolor(this.fill)
+    }
+  }
+
   _handleClick (e) {
     const { x, y } = this.canvas.getBoundingClientRect()
     const adjustedX = e.clientX - x

@@ -100,7 +100,7 @@ export default class ShipsBoard extends Board {
 
       if (placementValid) {
         this.shipMap.update(map)
-        this.drawShips()
+        super.drawMap(this.shipMap, { fill: this.selectedShip.color }, true)
       } else this.squares[square].flash('red')
     }
 
@@ -144,15 +144,6 @@ export default class ShipsBoard extends Board {
     return Bitmap.AND(this.shipMap, Bitmap.NOT(padShip)).bitString
   }
 
-  drawShips () {
-    const bits = this.shipMap.bits
-
-    for (let i = 0; i < this.shipMap.length; i++) {
-      if (bits[i]) this.squares[i].recolor(this.selectedShip.color)
-      else this.squares[i].recolor(this.fill)
-    }
-  }
-
   updateOrientation () {
     this.orientationDisplay.innerText = this.selectedShip.alignment.toLowerCase()
   }
@@ -171,7 +162,7 @@ export default class ShipsBoard extends Board {
     // The ship is present on the board somewhere, remove it before rotating
     if (this.selectedShip.anchor !== null) {
       this.shipMap.update(this.removeShip(this.selectedShip))
-      this.drawShips()
+      super.drawMap(this.shipMap, { fill: this.fill }, true)
     }
 
     this.selectedShip.rotate()

@@ -34,14 +34,6 @@ export default class AttacksBoard extends Board {
     this.canvas.addEventListener(CLICK_EVENT, this.gameTurn())
   }
 
-  drawMap (map, color = 'black') {
-    const bits = map.bits
-
-    for (let i = 0; i < this.attackMap.length; i++) {
-      if (bits[i]) this.squares[i].recolor(color)
-    }
-  }
-
   gameTurn () {
     return async ({ detail: clickedSquare }) => {
       // Player already attacked this square or it is not their turn
@@ -54,7 +46,7 @@ export default class AttacksBoard extends Board {
 
       const map = this.getAttackAsMap(clickedSquare)
       this.attackMap.update(Bitmap.OR(this.attackMap, map).bitString)
-      this.drawMap(map)
+      super.drawMap(map, { fill: 'black' })
 
       const enemyShips = new Bitmap(await this.api.sendAttack(map.bitString))
       this.gameOver = this.attackHitOrMiss(enemyShips)
@@ -64,7 +56,6 @@ export default class AttacksBoard extends Board {
       }
 
       if (!this.gameOver) {
-        console.log('about to pollForTurn')
         this.api.pollForTurn(async () => {
           const winnerID = await this.api.getWinStatus()
 
@@ -83,15 +74,15 @@ export default class AttacksBoard extends Board {
     this.hitMap.update(Bitmap.AND(enemyShips, this.attackMap).bitString)
     this.missMap.update(Bitmap.AND(Bitmap.NOT(enemyShips), this.attackMap).bitString)
 
-    this.drawMap(this.hitMap, 'coral')
-    this.drawMap(this.missMap, 'lightblue')
+    super.drawMap(this.hitMap, { fill: 'coral' })
+    super.drawMap(this.missMap, { fill: 'lightblue' })
   }
 
   async finishGame (isWinner) {
     if (isWinner) {
       await this.api.setWinStatus()
 
-      this.drawMap(this.hitMap, 'mediumseagreen')
+      super.drawMap(this.hitMap, { fill: 'mediumseagreen' })
       this.turnDisplay.style.color = 'mediumseagreen'
       this.turnDisplay.innerText = 'You Won!'
 
