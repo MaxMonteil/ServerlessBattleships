@@ -16,9 +16,14 @@ const RESOURCES = {
 
 export default class ApiService {
   constructor () {
+    const instance = this.constructor.instance
+    if (instance) return instance
+
     this.url = Config.URL
     this.version = Config.VERSION
     this.credentials = {}
+
+    this.constructor.instance = this
   }
 
   async joinGame () {
