@@ -1,0 +1,19 @@
+{
+  "name": "battleships",
+  "version": "1.0.0",
+  "description": "An in browser, serverless Battleship game",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MaxMonteil/ServerlessBattleships.git"
+  },
+  "author": "Maximilien Monteil, Hassan Faour",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/MaxMonteil/ServerlessBattleships/issues"
+  },
+  "homepage": "https://github.com/MaxMonteil/ServerlessBattleships#readme"
+}
