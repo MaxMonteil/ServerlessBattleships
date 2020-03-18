@@ -1,14 +1,14 @@
-import ApiService from '../api.js'
+import ApiService from '../api/ApiService.js'
 
 import ShipsBoard from './ShipsBoard.js'
 import AttacksBoard from './AttacksBoard.js'
 
 export default class Game {
-  constructor (detailsNodes, shipBoardData, attacksBoardData, serverInfo) {
+  constructor (detailsNodes, shipBoardData, attacksBoardData) {
     this.gameID = ''
     this.playerID = ''
 
-    this.api = new ApiService(serverInfo)
+    this.api = new ApiService()
 
     this.ShipsBoard = new ShipsBoard(
       this.api,

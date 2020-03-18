@@ -1,10 +1,4 @@
 import Game from './classes/Game.js'
-require('dotenv').config()
-
-const SERVER = {
-  url: 'http://localhost:5000/api',
-  version: 'v1',
-}
 
 const detailsNodes = {
   game: 'game_info',
@@ -31,7 +25,7 @@ const attacksBoardData = {
 }
 
 function run () {
-  new Game(detailsNodes, shipBoardData, attacksBoardData, SERVER).start()
+  new Game(detailsNodes, shipBoardData, attacksBoardData).start()
 }
 
 window.onload = run

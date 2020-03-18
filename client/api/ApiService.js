@@ -1,12 +1,28 @@
+import Config from './Config.js'
+
+const RESOURCES = {
+  GAME: 'game',
+  END_GAME: 'end_game',
+  CHECK_WIN: 'win',
+  SET_WIN: 'win',
+  ENEMY_SHIPS: 'shipmap',
+  SAVE_SHIPS: 'shipmap',
+  ENEMY_HITS: 'attack',
+  SAVE_HITS: 'attack',
+  POLL_PLAYERS: 'poll_players',
+  POLL_READY: 'poll_ready',
+  POLL_TURN: 'poll_turn',
+}
+
 export default class ApiService {
-  constructor ({ url, version }) {
-    this.url = url
-    this.version = version
+  constructor () {
+    this.url = Config.URL
+    this.version = Config.VERSION
     this.credentials = {}
   }
 
   async joinGame () {
-    const credentials = await this._getRequest('game')
+    const credentials = await this._getRequest(RESOURCES.GAME)
 
     if (credentials === null) throw new Error('Unable to join game')
 
@@ -15,7 +31,7 @@ export default class ApiService {
   }
 
   async endGame () {
-    const url = this._getEndpoint('end_game')
+    const url = this._buildEndpoint(RESOURCES.END_GAME)
     url.search = new URLSearchParams(this.credentials).toString()
 
     const resp = await fetch(url, {
@@ -29,52 +45,51 @@ export default class ApiService {
   }
 
   async getEnemyShipMap () {
-    return this._getRequest('shipmap')
+    return this._getRequest(RESOURCES.ENEMY_SHIPS)
   }
 
   async saveShips (shipMap) {
-    return this._postRequest('shipmap', shipMap)
+    return this._postRequest(RESOURCES.SAVE_SHIPS, shipMap)
   }
 
   async getReceivedHits () {
-    return this._getRequest('attack')
+    return this._getRequest(RESOURCES.ENEMY_HITS)
   }
 
   async sendAttack (attackMap) {
-    return this._postRequest('attack', attackMap)
+    return this._postRequest(RESOURCES.SAVE_HITS, attackMap)
   }
 
   async getWinStatus () {
-    return this._getRequest('win')
+    return this._getRequest(RESOURCES.CHECK_WIN)
   }
 
   async setWinStatus () {
-    return this._postRequest('win')
+    return this._postRequest(RESOURCES.SET_WIN)
   }
 
   pollForPlayers (successCallback, options) {
-    return this._pollService('poll_players', successCallback, options)
+    return this._pollService(RESOURCES.POLL_PLAYERS, successCallback, options)
   }
 
   pollForReady (successCallback, options) {
-    return this._pollService('poll_ready', successCallback, options)
+    return this._pollService(RESOURCES.POLL_READY, successCallback, options)
   }
 
   pollForTurn (successCallback, options) {
-    return this._pollService('poll_turn', successCallback, options)
+    return this._pollService(RESOURCES.POLL_TURN, successCallback, options)
   }
 
-  _pollService (resource, successCallback, options) {
+  _pollService (resource, pollEndCallback, options) {
     // The immediate option decides whether to start polling immediately
     // or return the poll service function for use as a callback later
     options = { immediate: false, interval: 1000, ...options }
 
     const pollFunction = () => setTimeout(async function poll () {
-      // Recursive setTimeout gives us more control than setInterval
       if (!await this._getRequest(resource)) {
         setTimeout(poll.bind(this), options.interval)
       } else {
-        successCallback()
+        pollEndCallback()
       }
     }.bind(this), options.interval)
 
@@ -83,7 +98,7 @@ export default class ApiService {
   }
 
   async _getRequest (resource) {
-    const url = this._getEndpoint(resource)
+    const url = this._buildEndpoint(resource)
     url.search = new URLSearchParams(this.credentials).toString()
 
     const resp = await fetch(url)
@@ -94,7 +109,7 @@ export default class ApiService {
   }
 
   async _postRequest (resource, data) {
-    const url = this._getEndpoint(resource)
+    const url = this._buildEndpoint(resource)
     url.search = new URLSearchParams(this.credentials).toString()
 
     const resp = await fetch(url, {
@@ -112,7 +127,7 @@ export default class ApiService {
     return resp.json()
   }
 
-  _getEndpoint (resource) {
+  _buildEndpoint (resource) {
     return new URL([this.url, this.version, resource].join('/'))
   }
 }
