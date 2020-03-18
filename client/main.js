@@ -14,8 +14,15 @@ const shipBoardData = {
     section: 'ships_board',
     shipBoardInputs: 'ships_board_info',
     orientationDisplay: 'alignment',
-    shipSelectForm: 'ship_select_form',
-    endShipPlacementForm: 'ship_board_form',
+  },
+  form: {
+    shipSelect: {
+      id: 'ship_select_form',
+      name: 'ship_select',
+    },
+    endShipPlacement: {
+      id: 'ship_board_form',
+    },
   },
 }
 
