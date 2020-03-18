@@ -111,7 +111,7 @@ export default class AttacksBoard extends Board {
 
       // show the last winning hit on you and where the enemy ships were
       this.updateShipsBoard(receivedHits)
-      super.drawMap(enemyShips, { fill: 'black' })
+      super.drawMap(enemyShips, { fill: 'gray' })
 
       this.turnDisplay.style.color = 'indianred'
       this.turnDisplay.innerText = 'You Lost...'
