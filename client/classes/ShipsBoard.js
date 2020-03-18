@@ -58,8 +58,8 @@ export default class ShipsBoard extends Board {
       },
       canvas: {
         event: CLICK_EVENT,
-        callback: null
-      }
+        callback: null,
+      },
     }
 
     for (const target in this.listeners) {
@@ -182,7 +182,7 @@ export default class ShipsBoard extends Board {
   async _handlePlacementEnd (e) {
     e.preventDefault()
     if (this.allShipsPlaced()) {
-      let resp = await this.api.saveShips(this.shipMap.bitString)
+      const resp = await this.api.saveShips(this.shipMap.bitString)
 
       if (!resp) {
         console.error('Unable to save ship position to server')

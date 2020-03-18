@@ -1,8 +1,9 @@
 import Game from './classes/Game.js'
+require('dotenv').config()
 
 const SERVER = {
   url: 'http://localhost:5000/api',
-  version: 'v1'
+  version: 'v1',
 }
 
 const detailsNodes = {
@@ -17,7 +18,7 @@ const shipBoardData = {
   section: '#ships_board',
   shipBoardInputs: 'ships_board_info',
   orientationDisplay: 'alignment',
-  shipSelectForm:  'ship_select_form',
+  shipSelectForm: 'ship_select_form',
   endShipPlacementForm: 'ship_board_form',
   placementWait: 'placement_wait',
 }
@@ -26,7 +27,7 @@ const attacksBoardData = {
   size: 500,
   canvas: '#attacks_canvas',
   section: '#attacks_board',
-  turnDisplay: '#turn_display'
+  turnDisplay: '#turn_display',
 }
 
 function run () {

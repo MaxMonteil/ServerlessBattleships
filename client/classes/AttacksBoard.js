@@ -138,6 +138,5 @@ export default class AttacksBoard extends Board {
       this.turnDisplay.style.color = 'gray'
       this.turnDisplay.innerText = 'Other player\'s turn'
     }
-
   }
 }

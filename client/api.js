@@ -15,7 +15,7 @@ export default class ApiService {
   }
 
   async endGame () {
-    let url = this._getEndpoint('end_game')
+    const url = this._getEndpoint('end_game')
     url.search = new URLSearchParams(this.credentials).toString()
 
     const resp = await fetch(url, {
@@ -29,27 +29,27 @@ export default class ApiService {
   }
 
   async getEnemyShipMap () {
-    return await this._getRequest('shipmap')
+    return this._getRequest('shipmap')
   }
 
   async saveShips (shipMap) {
-    return await this._postRequest('shipmap', shipMap)
+    return this._postRequest('shipmap', shipMap)
   }
 
   async getReceivedHits () {
-    return await this._getRequest('attack')
+    return this._getRequest('attack')
   }
 
   async sendAttack (attackMap) {
-    return await this._postRequest('attack', attackMap)
+    return this._postRequest('attack', attackMap)
   }
 
   async getWinStatus () {
-    return await this._getRequest('win')
+    return this._getRequest('win')
   }
 
   async setWinStatus () {
-    return await this._postRequest('win')
+    return this._postRequest('win')
   }
 
   pollForPlayers (successCallback, options) {
@@ -83,7 +83,7 @@ export default class ApiService {
   }
 
   async _getRequest (resource) {
-    let url = this._getEndpoint(resource)
+    const url = this._getEndpoint(resource)
     url.search = new URLSearchParams(this.credentials).toString()
 
     const resp = await fetch(url)
@@ -94,14 +94,14 @@ export default class ApiService {
   }
 
   async _postRequest (resource, data) {
-    let url = this._getEndpoint(resource)
+    const url = this._getEndpoint(resource)
     url.search = new URLSearchParams(this.credentials).toString()
 
     const resp = await fetch(url, {
       method: 'POST',
       mode: 'cors',
       headers: {
-        'Accept': 'application/json',
+        Accept: 'application/json',
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(data),
