@@ -26,6 +26,7 @@ export default class Game {
       'white',
       'gray',
       attacksBoardData,
+      this.ShipsBoard,
     )
 
     // SETUP

@@ -4,7 +4,7 @@ import Board from './Board.js'
 const CLICK_EVENT = 'attack-board-clicked'
 
 export default class AttacksBoard extends Board {
-  constructor (api, gridDimensions, fill, stroke, options) {
+  constructor (api, gridDimensions, fill, stroke, options, shipsBoard) {
     super(options.size, gridDimensions, fill, stroke, options.canvas, CLICK_EVENT)
 
     this.api = api
@@ -15,6 +15,8 @@ export default class AttacksBoard extends Board {
     this.attackMap = new Bitmap('0'.repeat(this.size))
     this.hitMap = new Bitmap('0'.repeat(this.size))
     this.missMap = new Bitmap('0'.repeat(this.size))
+
+    this.ShipsBoard = shipsBoard
 
     // SETUP
     this.attackSection = document.querySelector(options.section)
@@ -28,10 +30,26 @@ export default class AttacksBoard extends Board {
       this.setTurn(true)
     } else {
       this.setTurn(false)
-      this.api.pollForTurn(() => this.setTurn(true), { immediate: true })
+      this.api.pollForTurn(this.turnStart(), { immediate: true })
     }
 
     this.canvas.addEventListener(CLICK_EVENT, this.gameTurn())
+  }
+
+  turnStart () {
+    return async () => {
+      const winnerID = await this.api.getWinStatus()
+
+      if (winnerID !== null && winnerID !== this.api.credentials.player) {
+        this.finishGame(false)
+        await this.api.endGame()
+      } else {
+        const receivedHits = new Bitmap(await this.api.getReceivedHits())
+        this.updateShipsBoard(receivedHits)
+
+        this.setTurn(true)
+      }
+    }
   }
 
   gameTurn () {
@@ -49,33 +67,32 @@ export default class AttacksBoard extends Board {
       super.drawMap(map, { fill: 'black' })
 
       const enemyShips = new Bitmap(await this.api.sendAttack(map.bitString))
-      this.gameOver = this.attackHitOrMiss(enemyShips)
+      this.updateAttackBoard(enemyShips)
 
       if (this.isGameWon(enemyShips)) {
         this.gameOver = await this.finishGame(true)
       }
 
       if (!this.gameOver) {
-        this.api.pollForTurn(async () => {
-          const winnerID = await this.api.getWinStatus()
-
-          if (winnerID !== null && winnerID !== this.api.credentials.player) {
-            this.finishGame(false)
-            await this.api.endGame()
-          } else {
-            this.setTurn(true)
-          }
-        }, { immediate: true })
+        this.api.pollForTurn(this.turnStart(), { immediate: true })
       }
     }
   }
 
-  attackHitOrMiss (enemyShips) {
-    this.hitMap.update(Bitmap.AND(enemyShips, this.attackMap).bitString)
-    this.missMap.update(Bitmap.AND(Bitmap.NOT(enemyShips), this.attackMap).bitString)
+  updateAttackBoard (enemyShips) {
+    this.hitMap.update(this.getHits(enemyShips, this.attackMap).bitString)
+    this.missMap.update(this.getMisses(enemyShips, this.attackMap).bitString)
 
     super.drawMap(this.hitMap, { fill: 'coral' })
     super.drawMap(this.missMap, { fill: 'lightblue' })
+  }
+
+  updateShipsBoard (enemyHits) {
+    const hits = this.getHits(this.ShipsBoard.shipMap, enemyHits)
+    const misses = this.getMisses(this.ShipsBoard.shipMap, enemyHits)
+
+    this.ShipsBoard.drawMap(hits, { fill: 'indianred', stroke: 'indianred' })
+    this.ShipsBoard.drawMap(misses, { fill: 'lightblue', stroke: 'lightblue' })
   }
 
   async finishGame (isWinner) {
@@ -88,6 +105,9 @@ export default class AttacksBoard extends Board {
 
       return true
     } else {
+      const receivedHits = new Bitmap(await this.api.getReceivedHits())
+      this.updateShipsBoard(receivedHits)
+
       this.turnDisplay.style.color = 'indianred'
       this.turnDisplay.innerText = 'You Lost...'
 
@@ -95,13 +115,13 @@ export default class AttacksBoard extends Board {
     }
   }
 
-  isGameWon (enemyShips) {
-    return Bitmap.EQ(Bitmap.AND(enemyShips, this.attackMap), enemyShips)
-  }
+  isGameWon = (enemyShips) => Bitmap.EQ(Bitmap.AND(enemyShips, this.attackMap), enemyShips)
 
-  getAttackAsMap (square) {
-    return new Bitmap('0'.repeat(square) + '1' + '0'.repeat(this.size - (square + 1)))
-  }
+  getAttackAsMap = (square) => new Bitmap('0'.repeat(square) + '1' + '0'.repeat(this.size - (square + 1)))
+
+  getHits = (ships, attacks) => Bitmap.AND(ships, attacks)
+
+  getMisses = (ships, attacks) => Bitmap.AND(Bitmap.NOT(ships), attacks)
 
   setTurn (isTurn) {
     this.isTurn = isTurn
