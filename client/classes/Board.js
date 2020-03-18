@@ -1,13 +1,19 @@
 import Square from './Square.js'
 
-export default class Board {
-  constructor (pixelDimensions, gridDimensions, fill, stroke, canvasID, clickEvent) {
-    this.pixelDimensions = pixelDimensions
-    this.gridDimensions = gridDimensions
-    this.size = gridDimensions ** 2
+export const GRID_DIVISIONS = 10
+export const GRID_FILL = 'white'
+export const GRID_STROKE = 'gray'
 
-    this.fill = fill
-    this.stroke = stroke
+export default class Board {
+  constructor (pixelDimensions, canvasID, clickEvent) {
+    this.pixelDimensions = pixelDimensions
+    this.size = GRID_DIVISIONS ** 2
+
+    this.grid = {
+      divisions: GRID_DIVISIONS,
+      fill: GRID_FILL,
+      stroke: GRID_STROKE,
+    }
 
     this.canvas = document.querySelector(canvasID)
     this.ctx = this.canvas.getContext('2d')
@@ -19,10 +25,10 @@ export default class Board {
   }
 
   drawBoard () {
-    this.ctx.fillStyle = this.fill
-    this.ctx.strokeStyle = this.stroke
+    this.ctx.fillStyle = GRID_FILL
+    this.ctx.strokeStyle = GRID_STROKE
     for (let i = 0; i < this.size; i++) {
-      const s = new Square(i, this.ctx, this.pixelDimensions, this.gridDimensions, this.fill, this.stroke)
+      const s = new Square(i, this.ctx, this.pixelDimensions, GRID_DIVISIONS, GRID_FILL, GRID_STROKE)
       s.recolor()
 
       this.squares.push(s)
@@ -30,12 +36,12 @@ export default class Board {
   }
 
   drawMap (map, style, erase = false) {
-    const { fill, stroke } = { fill: this.fill, stroke: this.stroke, ...style }
+    const { fill, stroke } = { fill: GRID_FILL, stroke: GRID_STROKE, ...style }
     const bits = map.bits
 
     for (let i = 0; i < bits.length; i++) {
       if (bits[i]) this.squares[i].recolor(fill, stroke)
-      if(!bits[i] && erase) this.squares[i].recolor(this.fill, this.stroke)
+      if(!bits[i] && erase) this.squares[i].recolor(GRID_FILL, GRID_STROKE)
     }
   }
 

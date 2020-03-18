@@ -3,8 +3,6 @@ import ApiService from '../api.js'
 import ShipsBoard from './ShipsBoard.js'
 import AttacksBoard from './AttacksBoard.js'
 
-const GRID_DIMENSIONS = 10
-
 export default class Game {
   constructor (detailsNodes, shipBoardData, attacksBoardData, serverInfo) {
     this.gameID = ''
@@ -14,17 +12,11 @@ export default class Game {
 
     this.ShipsBoard = new ShipsBoard(
       this.api,
-      GRID_DIMENSIONS,
-      'white',
-      'gray',
       shipBoardData,
     )
 
     this.AttacksBoard = new AttacksBoard(
       this.api,
-      GRID_DIMENSIONS,
-      'white',
-      'gray',
       attacksBoardData,
       this.ShipsBoard,
     )

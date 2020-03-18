@@ -4,8 +4,8 @@ import Board from './Board.js'
 const CLICK_EVENT = 'attack-board-clicked'
 
 export default class AttacksBoard extends Board {
-  constructor (api, gridDimensions, fill, stroke, options, shipsBoard) {
-    super(options.size, gridDimensions, fill, stroke, options.canvas, CLICK_EVENT)
+  constructor (api, options, shipsBoard) {
+    super(options.size, options.canvas, CLICK_EVENT)
 
     this.api = api
 

@@ -1,12 +1,12 @@
 import Bitmap from './Bitmap.js'
-import Board from './Board.js'
+import Board, { GRID_DIVISIONS } from './Board.js'
 import Ship from './Ship.js'
 
 const CLICK_EVENT = 'ships-board-clicked'
 
 export default class ShipsBoard extends Board {
-  constructor (api, gridDimensions, fill, stroke, options) {
-    super(options.size, gridDimensions, fill, stroke, options.canvas, CLICK_EVENT)
+  constructor (api, options) {
+    super(options.size, options.canvas, CLICK_EVENT)
 
     this.api = api
 
@@ -112,14 +112,14 @@ export default class ShipsBoard extends Board {
   }
 
   placeShip (ship, start) {
-    const shipOffset = Ship.getOffsetIndices(ship, start, this.gridDimensions)
+    const shipOffset = Ship.getOffsetIndices(ship, start, GRID_DIVISIONS)
 
     // Check for out-of-bounds along both axes
     const yValid = Math.max(...shipOffset) < this.size
     // if the ship is vertical, we don't need any checks since the width is 1 square
     const xValid = ship.alignment === 'VERTICAL' ||
       // for horizontal we check that each ship square is on the same row
-      shipOffset.map(i => (i / this.gridDimensions) >> 0).every((value, _, arr) => value === arr[0])
+      shipOffset.map(i => (i / GRID_DIVISIONS) >> 0).every((value, _, arr) => value === arr[0])
 
     const paddedShip = Ship.padBounds(shipOffset, this.size)
 
@@ -143,7 +143,7 @@ export default class ShipsBoard extends Board {
   }
 
   moveShip (ship, removeAnchor = true) {
-    const padShip = Ship.padBounds(Ship.getOffsetIndices(ship, ship.anchor, this.gridDimensions), this.size)
+    const padShip = Ship.padBounds(Ship.getOffsetIndices(ship, ship.anchor, GRID_DIVISIONS), this.size)
     if (removeAnchor) ship.anchor = null
     return Bitmap.AND(this.shipMap, Bitmap.NOT(padShip)).bitString
   }
