@@ -11,8 +11,8 @@
 import Bitmap from './Bitmap.js'
 
 const ALIGN = {
-  'HORIZONTAL': 'HORIZONTAL',
-  'VERTICAL': 'VERTICAL',
+  HORIZONTAL: 'HORIZONTAL',
+  VERTICAL: 'VERTICAL',
 }
 
 export default class Ship {
@@ -33,7 +33,7 @@ export default class Ship {
   }
 
   rotate () {
-    let rotatedShip = [...this.bounds.bits]
+    const rotatedShip = [...this.bounds.bits]
     let tmp
 
     // Since ships are exclusively the top row or left column
@@ -57,7 +57,7 @@ export default class Ship {
     // offset for each row
     const rowOffset = gridDimensions - ship.size
 
-    let overlay = []
+    const overlay = []
     for (let i = 0; i < ship.bounds.length; i++) {
       if (shipBits[i]) overlay.push(anchor + i + (rowOffset * ((i / ship.size) >> 0)))
     }
@@ -68,7 +68,7 @@ export default class Ship {
   static padBounds (offsetIndices, totalSize) {
     // Place the ship on a larger bitmap
     const result = new Array(totalSize).fill(0)
-    offsetIndices.forEach(index => result[index] = 1)
+    offsetIndices.forEach(index => (result[index] = 1))
     return new Bitmap(result.join(''))
   }
 }

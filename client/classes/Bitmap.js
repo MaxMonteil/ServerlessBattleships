@@ -1,15 +1,14 @@
+const MAX_BITWISE_LENGTH = 32
+
 export default class Bitmap {
   constructor (bitString) {
-    const MAX_BITWISE_LENGTH = 32
-    this.segments
-    this.length
+    this.segments = []
+    this.length = null
 
     this.update(bitString)
   }
 
   update (bitString) {
-    const MAX_BITWISE_LENGTH = 32
-
     if (typeof bitString === 'string') {
       this.length = bitString.length
       this.segments = this._divideBitString(bitString, MAX_BITWISE_LENGTH)
@@ -28,11 +27,12 @@ export default class Bitmap {
   _divideBitString (bitString, length) {
     // bit operations work on a maximum of 32 bits so this divides the
     // 100 char length string into arrays of size <= 32
-    let result = [], i = 0
-    while (true)  {
-        result.push(bitString.substring(i * length, (i * length) + length))
-        if (result[result.length - 1].length < length) break
-        i++
+    const result = []
+    let i = 0
+    while (true) {
+      result.push(bitString.substring(i * length, (i * length) + length))
+      if (result[result.length - 1].length < length) break
+      i++
     }
     return result
   }
@@ -48,15 +48,15 @@ export default class Bitmap {
   // NOT is a unary operator and doesn't need padding
   static NOT = A => new Bitmap(A.bits.map(bit => bit ? 0 : 1).join(''))
 
-  static OR = (A, B) => Bitmap._bitwise(A, B, ((A, B) => A | B))
-  static AND = (A, B) => Bitmap._bitwise(A, B, ((A, B) => A & B))
-  static XOR = (A, B) => Bitmap._bitwise(A, B, ((A, B) => A ^ B))
+  static OR = (A, B) => Bitmap._bitwise(A, B, (A, B) => A | B)
+  static AND = (A, B) => Bitmap._bitwise(A, B, (A, B) => A & B)
+  static XOR = (A, B) => Bitmap._bitwise(A, B, (A, B) => A ^ B)
 
   static _bitwise (A, B, op) {
     // Bitwise ops do not have an order but the bitmaps may have different lengths,
     // to help with padding we make sure B always represents the shorter one
     if (B.segments.length > A.segments.length) {
-      let tmp = B
+      const tmp = B
       B = A
       A = tmp
     }
@@ -67,7 +67,7 @@ export default class Bitmap {
         // if the B segment is shorter, pad it to match the A segment
         : B.segments[i].length < segment.length ? B.segments[i].padEnd(segment.length, '0')
         // no padding needed
-        : B.segments[i]
+          : B.segments[i]
 
       // the strings need to be parsed into integers for bitwise operations
       // then we use >>> to get a non-negative/unsigned result

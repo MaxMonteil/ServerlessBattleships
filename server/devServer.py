@@ -74,7 +74,7 @@ def api_attack():
             games[gameID]["players"][playerID]["attack"] = request.json
             next_turn(gameID)
 
-            return jsonify(games[gameID]["players"][int(not playerID)]["shipmap"]), 201
+            return jsonify({"endpoint": request.base_url}), 201
         else:
             return jsonify({"message": "Not player's turn"}), 300
 

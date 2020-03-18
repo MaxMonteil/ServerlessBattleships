@@ -1,10 +1,6 @@
 import Game from './classes/Game.js'
 
-const SERVER = {
-  url: 'http://localhost:5000/api',
-  version: 'v1'
-}
-
+// IDs of HTML elements for referencing during the game
 const detailsNodes = {
   game: 'game_info',
   lobby: 'lobby',
@@ -13,24 +9,34 @@ const detailsNodes = {
 
 const shipBoardData = {
   size: 300,
-  canvas: '#ships_canvas',
-  section: '#ships_board',
-  shipBoardInputs: 'ships_board_info',
-  orientationDisplay: 'alignment',
-  shipSelectForm:  'ship_select_form',
-  endShipPlacementForm: 'ship_board_form',
-  placementWait: 'placement_wait',
+  id: {
+    canvas: 'ships_canvas',
+    section: 'ships_board',
+    shipBoardInputs: 'ships_board_info',
+    orientationDisplay: 'alignment',
+  },
+  form: {
+    shipSelect: {
+      id: 'ship_select_form',
+      name: 'ship_select',
+    },
+    endShipPlacement: {
+      id: 'ship_board_form',
+    },
+  },
 }
 
 const attacksBoardData = {
   size: 500,
-  canvas: '#attacks_canvas',
-  section: '#attacks_board',
-  turnDisplay: '#turn_display'
+  id: {
+    canvas: 'attacks_canvas',
+    section: 'attacks_board',
+    turnDisplay: 'turn_display',
+  },
 }
 
 function run () {
-  new Game(detailsNodes, shipBoardData, attacksBoardData, SERVER).start()
+  new Game(detailsNodes, shipBoardData, attacksBoardData).start()
 }
 
 window.onload = run

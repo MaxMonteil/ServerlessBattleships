@@ -1,38 +1,24 @@
-import ApiService from '../api.js'
+import ApiService from '../api/ApiService.js'
 
 import ShipsBoard from './ShipsBoard.js'
 import AttacksBoard from './AttacksBoard.js'
 
-const GRID_DIMENSIONS = 10
-
 export default class Game {
-  constructor (detailsNodes, shipBoardData, attacksBoardData, serverInfo) {
-    this.gameID = ''
-    this.playerID = ''
-
-    this.api = new ApiService(serverInfo)
-
-    this.ShipsBoard = new ShipsBoard(
-      this.api,
-      GRID_DIMENSIONS,
-      'white',
-      'gray',
-      shipBoardData,
-    )
-
-    this.AttacksBoard = new AttacksBoard(
-      this.api,
-      GRID_DIMENSIONS,
-      'white',
-      'gray',
-      attacksBoardData,
-      this.ShipsBoard,
-    )
-
-    // SETUP
+  constructor (detailsNodes, shipBoardData, attacksBoardData) {
+    // REFERENCES
+    this.window = window
     this.gameInfo = document.getElementById(detailsNodes.game)
     this.lobbyNode = document.getElementById(detailsNodes.lobby)
     this.placementWait = document.getElementById(detailsNodes.placementWait)
+
+    // DATA
+    this.gameID = ''
+    this.playerID = ''
+
+    this.api = new ApiService()
+
+    this.ShipsBoard = new ShipsBoard(shipBoardData)
+    this.AttacksBoard = new AttacksBoard(attacksBoardData, this.ShipsBoard)
   }
 
   async start () {
@@ -44,21 +30,28 @@ export default class Game {
 
       this.gameInfo.innerHTML = `Game: <strong>${gameID}</strong> | Player: <strong>${playerID + 1}</strong>`
 
-      this.api.pollForPlayers(() => this.placeShips(), { immediate: true })
+      this.api.pollForPlayers(() => this.startPlacingShips(), { immediate: true })
     } catch (e) {
       console.error(e.message)
     }
   }
 
-  placeShips () {
+  startPlacingShips () {
     // We use the api to get a polling callback for ships board to run when
     // the player finishes placing their ships
     this.lobbyNode.style.display = 'none'
 
-    const pollCallback = this.api.pollForReady(() => {
-      this.placementWait.style.display = 'none'
-      this.AttacksBoard.start()
+    this.window.addEventListener('placement-done', () => {
+      this.placementWait.style.display = 'block'
+
+      this.api.pollForReady(() => this.startGameLoop(), { immediate: true })
     })
-    this.ShipsBoard.start(pollCallback)
+
+    this.ShipsBoard.start()
+  }
+
+  startGameLoop () {
+    this.placementWait.style.display = 'none'
+    this.AttacksBoard.start()
   }
 }
