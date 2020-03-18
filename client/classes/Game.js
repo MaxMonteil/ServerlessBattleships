@@ -10,16 +10,8 @@ export default class Game {
 
     this.api = new ApiService()
 
-    this.ShipsBoard = new ShipsBoard(
-      this.api,
-      shipBoardData,
-    )
-
-    this.AttacksBoard = new AttacksBoard(
-      this.api,
-      attacksBoardData,
-      this.ShipsBoard,
-    )
+    this.ShipsBoard = new ShipsBoard(shipBoardData)
+    this.AttacksBoard = new AttacksBoard(attacksBoardData, this.ShipsBoard)
 
     // SETUP
     this.gameInfo = document.getElementById(detailsNodes.game)

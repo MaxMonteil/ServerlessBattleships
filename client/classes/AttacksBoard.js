@@ -1,13 +1,15 @@
+import ApiService from '../api/ApiService.js'
+
 import Bitmap from './Bitmap.js'
 import Board from './Board.js'
 
 const CLICK_EVENT = 'attack-board-clicked'
 
 export default class AttacksBoard extends Board {
-  constructor (api, options, shipsBoard) {
+  constructor (options, shipsBoard) {
     super(options.size, options.canvas, CLICK_EVENT)
 
-    this.api = api
+    this.api = new ApiService()
 
     this.isTurn = false
     this.gameOver = false

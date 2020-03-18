@@ -1,3 +1,5 @@
+import ApiService from '../api/ApiService.js'
+
 import Bitmap from './Bitmap.js'
 import Board, { GRID_DIVISIONS } from './Board.js'
 import Ship from './Ship.js'
@@ -5,10 +7,10 @@ import Ship from './Ship.js'
 const CLICK_EVENT = 'ships-board-clicked'
 
 export default class ShipsBoard extends Board {
-  constructor (api, options) {
+  constructor (options) {
     super(options.size, options.canvas, CLICK_EVENT)
 
-    this.api = api
+    this.api = new ApiService()
 
     this.shipMap = new Bitmap('0'.repeat(this.size))
 
