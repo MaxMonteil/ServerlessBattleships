@@ -121,15 +121,19 @@ export default class ShipsBoard extends Board {
       // for horizontal we check that each ship square is on the same row
       shipOffset.map(i => (i / this.gridDimensions) >> 0).every((value, _, arr) => value === arr[0])
 
-    const paddedShip = Ship.padBounds(ship, shipOffset, this.size)
+    const paddedShip = Ship.padBounds(shipOffset, this.size)
 
-    // Check for collisions against other ships but allow if ship overlaps with itself
-    const collisions = !Bitmap.EQ(Bitmap.AND(new Bitmap(this.removeShip(ship, false)), paddedShip), Bitmap.FALSE(this.size))
+    // When placing an already present ship, remove it to allow positions that might overlap with itself
+    const collisionCheckMap = ship.anchor === null
+      ? this.shipMap
+      : new Bitmap(this.moveShip(ship, false))
+    // Check for collisions against other ships
+    const collisions = !Bitmap.EQ(Bitmap.AND(collisionCheckMap, paddedShip), Bitmap.FALSE(this.size))
 
     if (!yValid || !xValid || collisions) return { placementValid: false, map: null }
 
     // this ship is already somewhere on the map
-    if (ship.anchor !== null) this.shipMap.update(this.removeShip(ship))
+    if (ship.anchor !== null) this.shipMap.update(this.moveShip(ship))
 
     ship.anchor = start
     return {
@@ -138,8 +142,8 @@ export default class ShipsBoard extends Board {
     }
   }
 
-  removeShip (ship, removeAnchor = true) {
-    const padShip = Ship.padBounds(ship, Ship.getOffsetIndices(ship, ship.anchor, this.gridDimensions), this.size)
+  moveShip (ship, removeAnchor = true) {
+    const padShip = Ship.padBounds(Ship.getOffsetIndices(ship, ship.anchor, this.gridDimensions), this.size)
     if (removeAnchor) ship.anchor = null
     return Bitmap.AND(this.shipMap, Bitmap.NOT(padShip)).bitString
   }
@@ -161,8 +165,8 @@ export default class ShipsBoard extends Board {
 
     // The ship is present on the board somewhere, remove it before rotating
     if (this.selectedShip.anchor !== null) {
-      this.shipMap.update(this.removeShip(this.selectedShip))
-      super.drawMap(this.shipMap, { fill: this.fill }, true)
+      this.shipMap.update(this.moveShip(this.selectedShip, false))
+      super.drawMap(this.shipMap, { fill: this.selectedShip.color }, true)
     }
 
     this.selectedShip.rotate()
