@@ -5,7 +5,7 @@ import AttacksBoard from './AttacksBoard.js'
 
 export default class Game {
   constructor (detailsNodes, shipBoardData, attacksBoardData) {
-    // SETUP
+    // REFERENCES
     this.window = window
     this.gameInfo = document.getElementById(detailsNodes.game)
     this.lobbyNode = document.getElementById(detailsNodes.lobby)

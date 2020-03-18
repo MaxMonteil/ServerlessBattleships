@@ -29,9 +29,9 @@ export default class ShipsBoard extends Board {
     this.ships = {
       Carrier: new Ship(5),
       Battleship: new Ship(4),
-      // Destroyer: new Ship(3),
-      // Submarine: new Ship(3),
-      // Patrol: new Ship(2),
+      Destroyer: new Ship(3),
+      Submarine: new Ship(3),
+      Patrol: new Ship(2),
     }
 
     this.selectedShip = null
