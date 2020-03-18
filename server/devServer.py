@@ -56,7 +56,7 @@ def api_shipmap():
     playerID = int(request.args["player"])
 
     if request.method == "GET":
-        return jsonify(games[gameID]["players"][playerID]["shipmap"]), 200
+        return jsonify(games[gameID]["players"][int(not playerID)]["shipmap"]), 200
     else:
         games[gameID]["players"][playerID]["shipmap"] = request.json
         return jsonify({"endpoint": request.base_url}), 201

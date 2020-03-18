@@ -28,7 +28,7 @@ export default class ApiService {
     return resp.json()
   }
 
-  async getShipMap () {
+  async getEnemyShipMap () {
     return await this._getRequest('shipmap')
   }
 
