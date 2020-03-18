@@ -91,8 +91,8 @@ export default class AttacksBoard extends Board {
     const hits = this.getHits(this.ShipsBoard.shipMap, enemyHits)
     const misses = this.getMisses(this.ShipsBoard.shipMap, enemyHits)
 
-    this.ShipsBoard.drawMap(hits, { fill: 'indianred', stroke: 'indianred' })
-    this.ShipsBoard.drawMap(misses, { fill: 'lightblue', stroke: 'lightblue' })
+    this.ShipsBoard.drawMap(hits, { fill: 'indianred' })
+    this.ShipsBoard.drawMap(misses, { fill: 'lightblue' })
   }
 
   async finishGame (isWinner) {
@@ -106,7 +106,12 @@ export default class AttacksBoard extends Board {
       return true
     } else {
       const receivedHits = new Bitmap(await this.api.getReceivedHits())
+      const enemyShips = new Bitmap(await this.api.getEnemyShipMap())
+      enemyShips.update(Bitmap.AND(Bitmap.NOT(this.attackMap), enemyShips).bitString)
+
+      // show the last winning hit on you and where the enemy ships were
       this.updateShipsBoard(receivedHits)
+      super.drawMap(enemyShips, { fill: 'black' })
 
       this.turnDisplay.style.color = 'indianred'
       this.turnDisplay.innerText = 'You Lost...'
