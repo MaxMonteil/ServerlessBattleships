@@ -35,7 +35,7 @@ export default class Board {
 
     for (let i = 0; i < bits.length; i++) {
       if (bits[i]) this.squares[i].recolor(fill, stroke)
-      if(!bits[i] && erase) this.squares[i].recolor(this.fill)
+      if(!bits[i] && erase) this.squares[i].recolor(this.fill, this.stroke)
     }
   }
 
