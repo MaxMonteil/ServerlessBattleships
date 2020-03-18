@@ -15,7 +15,7 @@ export default class Board {
       stroke: GRID_STROKE,
     }
 
-    this.canvas = document.querySelector(canvasID)
+    this.canvas = document.getElementById(canvasID)
     this.ctx = this.canvas.getContext('2d')
     this.canvas.addEventListener('click', e => this._handleClick(e))
 

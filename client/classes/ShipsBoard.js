@@ -7,9 +7,19 @@ import Ship from './Ship.js'
 const CLICK_EVENT = 'ships-board-clicked'
 
 export default class ShipsBoard extends Board {
-  constructor (options) {
-    super(options.size, options.canvas, CLICK_EVENT)
+  constructor ({ size, id }) {
+    super(size, id.canvas, CLICK_EVENT)
 
+    // SETUP
+    this.window = window
+    this.shipsSection = document.getElementById(id.section)
+    this.shipBoardInputs = document.getElementById(id.shipBoardInputs)
+    this.orientationDisplay = document.getElementById(id.orientationDisplay)
+    this.shipSelectForm = document.forms[id.shipSelectForm]
+    this.endShipPlacementForm = document.forms[id.endShipPlacementForm]
+    this.placementWait = document.getElementById(id.placementWait)
+
+    // DATA
     this.api = new ApiService()
 
     this.shipMap = new Bitmap('0'.repeat(this.size))
@@ -23,49 +33,34 @@ export default class ShipsBoard extends Board {
     }
 
     this.selectedShip = null
-
-    this.placementEndCallback = null
-
-    // SETUP
-    // Get reference to DOM elements
-    this.window = window
-    this.shipsSection = document.querySelector(options.section)
-    this.shipBoardInputs = document.getElementById(options.shipBoardInputs)
-    this.orientationDisplay = document.getElementById(options.orientationDisplay)
-    this.shipSelectForm = document.forms[options.shipSelectForm]
-    this.endShipPlacementForm = document.forms[options.endShipPlacementForm]
-    this.placementWait = document.getElementById(options.placementWait)
   }
 
-  start (callback) {
+  start () {
     this.shipsSection.style.visibility = 'visible'
     super.drawBoard()
     this.setupListeners()
-    this.placementEndCallback = callback
   }
 
   setupListeners () {
     this.listeners = {
       window: {
-        event: 'keydown',
-        callback: e => this._handleShipRotation(e),
+        keydown: e => this._handleShipRotation(e),
       },
       shipSelectForm: {
-        event: 'submit',
-        callback: e => this._handleShipSelection(e),
+        submit: e => this._handleShipSelection(e),
       },
       endShipPlacementForm: {
-        event: 'submit',
-        callback: e => this._handlePlacementEnd(e),
+        submit: e => this._handlePlacementEnd(e),
       },
       canvas: {
-        event: CLICK_EVENT,
-        callback: null,
+        [CLICK_EVENT]: null,
       },
     }
 
-    for (const target in this.listeners) {
-      this[target].addEventListener(this.listeners[target].event, this.listeners[target].callback)
+    for (const [target, listener] of Object.entries(this.listeners)) {
+      for (const [event, handler] of Object.entries(listener)) {
+        this[target].addEventListener(event, handler)
+      }
     }
 
     this.selectShip(this.ships.Carrier)
@@ -73,12 +68,16 @@ export default class ShipsBoard extends Board {
 
   teardownListeners (target = null) {
     if (target !== null) {
-      this[target].removeEventListener(this.listeners[target].event, this.listeners[target].callback)
+      for (const [event, handler] of Object.entries(this.listeners[target])) {
+        this[target].removeEventListener(event, handler)
+      }
       return
     }
 
-    for (const target in this.listeners) {
-      this[target].removeEventListener(this.listeners[target].event, this.listeners[target].callback)
+    for (const [target, listener] of Object.entries(this.listeners)) {
+      for (const [event, handler] of Object.entries(listener)) {
+        this[target].removeEventListener(event, handler)
+      }
     }
   }
 
@@ -107,10 +106,7 @@ export default class ShipsBoard extends Board {
     }
 
     this.canvas.addEventListener(CLICK_EVENT, shipWatcher)
-    this.listeners.canvas = {
-      event: CLICK_EVENT,
-      callback: shipWatcher,
-    }
+    this.listeners.canvas[CLICK_EVENT] = shipWatcher
   }
 
   placeShip (ship, start) {
@@ -193,8 +189,7 @@ export default class ShipsBoard extends Board {
 
       this.teardownListeners()
       this.hideBoardInputs()
-      this.placementWait.style.display = 'block'
-      this.placementEndCallback()
+      this.window.dispatchEvent(new Event('placement-done'))
     }
   }
 }

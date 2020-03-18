@@ -6,8 +6,8 @@ import Board from './Board.js'
 const CLICK_EVENT = 'attack-board-clicked'
 
 export default class AttacksBoard extends Board {
-  constructor (options, shipsBoard) {
-    super(options.size, options.canvas, CLICK_EVENT)
+  constructor ({ size, id }, shipsBoard) {
+    super(size, id.canvas, CLICK_EVENT)
 
     this.api = new ApiService()
 
@@ -21,8 +21,8 @@ export default class AttacksBoard extends Board {
     this.ShipsBoard = shipsBoard
 
     // SETUP
-    this.attackSection = document.querySelector(options.section)
-    this.turnDisplay = document.querySelector(options.turnDisplay)
+    this.attackSection = document.getElementById(id.section)
+    this.turnDisplay = document.getElementById(id.turnDisplay)
   }
 
   start () {

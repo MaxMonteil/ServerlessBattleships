@@ -5,6 +5,13 @@ import AttacksBoard from './AttacksBoard.js'
 
 export default class Game {
   constructor (detailsNodes, shipBoardData, attacksBoardData) {
+    // SETUP
+    this.window = window
+    this.gameInfo = document.getElementById(detailsNodes.game)
+    this.lobbyNode = document.getElementById(detailsNodes.lobby)
+    this.placementWait = document.getElementById(detailsNodes.placementWait)
+
+    // DATA
     this.gameID = ''
     this.playerID = ''
 
@@ -12,11 +19,6 @@ export default class Game {
 
     this.ShipsBoard = new ShipsBoard(shipBoardData)
     this.AttacksBoard = new AttacksBoard(attacksBoardData, this.ShipsBoard)
-
-    // SETUP
-    this.gameInfo = document.getElementById(detailsNodes.game)
-    this.lobbyNode = document.getElementById(detailsNodes.lobby)
-    this.placementWait = document.getElementById(detailsNodes.placementWait)
   }
 
   async start () {
@@ -28,21 +30,28 @@ export default class Game {
 
       this.gameInfo.innerHTML = `Game: <strong>${gameID}</strong> | Player: <strong>${playerID + 1}</strong>`
 
-      this.api.pollForPlayers(() => this.placeShips(), { immediate: true })
+      this.api.pollForPlayers(() => this.startPlacingShips(), { immediate: true })
     } catch (e) {
       console.error(e.message)
     }
   }
 
-  placeShips () {
+  startPlacingShips () {
     // We use the api to get a polling callback for ships board to run when
     // the player finishes placing their ships
     this.lobbyNode.style.display = 'none'
 
-    const pollCallback = this.api.pollForReady(() => {
-      this.placementWait.style.display = 'none'
-      this.AttacksBoard.start()
+    this.window.addEventListener('placement-done', () => {
+      this.placementWait.style.display = 'block'
+
+      this.api.pollForReady(() => this.startGameLoop(), { immediate: true })
     })
-    this.ShipsBoard.start(pollCallback)
+
+    this.ShipsBoard.start()
+  }
+
+  startGameLoop () {
+    this.placementWait.style.display = 'none'
+    this.AttacksBoard.start()
   }
 }
