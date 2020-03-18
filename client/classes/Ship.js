@@ -50,13 +50,13 @@ export default class Ship {
   }
 
   static getOffsetIndices (ship, anchor, gridDimensions) {
+    // Gets the indices of the ship's squares relative to the board
     const shipBits = ship.bounds.bits
 
     // the indices of the smaller square on the board need an additional
     // offset for each row
     const rowOffset = gridDimensions - ship.size
 
-    // this gets us the indices of the ship's squares relative to the board
     let overlay = []
     for (let i = 0; i < ship.bounds.length; i++) {
       if (shipBits[i]) overlay.push(anchor + i + (rowOffset * ((i / ship.size) >> 0)))
@@ -65,7 +65,7 @@ export default class Ship {
     return overlay
   }
 
-  static padBounds (ship, offsetIndices, totalSize) {
+  static padBounds (offsetIndices, totalSize) {
     // Place the ship on a larger bitmap
     const result = new Array(totalSize).fill(0)
     offsetIndices.forEach(index => result[index] = 1)
