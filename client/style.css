@@ -1,0 +1,73 @@
+html * {
+    font-family: sans-serif;
+    box-sizing: border-box;
+}
+
+canvas {
+    grid-column: 2 / span 10;
+    grid-row: 2 / span 10;
+    border: 2px solid black;
+    margin: -2px;
+}
+
+.game_grid {
+    display: grid;
+    grid-template-columns: repeat(11, min-content);
+    grid-template-rows: repeat(10, min-content);
+    justify-items: center;
+    align-items: center;
+}
+
+.game_grid > div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid lightgray;
+}
+
+.game_grid > div:not(:nth-child(11)) {
+    border-right: none;
+}
+
+.game_grid > div.letters,
+.game_grid > div.letters ~ div:not(:last-of-type) {
+    border-bottom: none;
+}
+
+#ships_board {
+    visibility: hidden;
+}
+
+#ships_grid > div {
+    width: 30px;
+    height: 30px;
+}
+
+#ships_board_info {
+    margin-top: 16px;
+}
+
+#alignment {
+    text-transform: capitalize;
+}
+
+#placement_wait {
+    display: none;
+}
+
+#attacks_board {
+    visibility: hidden;
+    margin-top: -96px;
+    margin-left: 282px;
+}
+
+#attacks_grid > div {
+    width: 50px;
+    height: 50px;
+}
+
+#turn_display {
+    margin: 0;
+    margin-left: 100px;
+    margin-bottom: 20px;
+}

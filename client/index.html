@@ -5,17 +5,109 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Battleship</title>
-    <script src="./main.js"></script>
-    <style type="text/css">
-        body > * {
-            box-sizing: border-box;
-        }
-        canvas {
-            border: 2px solid black;
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
+    <script type="module" src="./main.js"></script>
 </head>
 <body>
-    <canvas id="canvas" width="550" height="550"></canvas>
+    <header>
+        <h1>Battleships</h1>
+        <p id="game_info"></p>
+    </header>
+
+    <section id="lobby">
+        <h2>Welcome to Battleships!</h2>
+        <p>Waiting for another player to join your game...</p>
+    </section>
+
+    <section id="ships_board">
+        <h2>Your Ships</h2>
+        <div id="ships_grid" class="game_grid">
+            <span></span>
+            <div>1</div>
+            <div>2</div>
+            <div>3</div>
+            <div>4</div>
+            <div>5</div>
+            <div>6</div>
+            <div>7</div>
+            <div>8</div>
+            <div>9</div>
+            <div>10</div>
+
+            <div class="letters">A</div>
+            <div>B</div>
+            <div>C</div>
+            <div>D</div>
+            <div>E</div>
+            <div>F</div>
+            <div>G</div>
+            <div>H</div>
+            <div>I</div>
+            <div>J</div>
+
+            <canvas id="ships_canvas" width="300" height="300"></canvas>
+        </div>
+
+        <div id="ships_board_info">
+            <form id="ship_select_form">
+                <label for="ship_select">Choose ship to place</label>
+                <br>
+                <select name="ship_select" id="ship_select">
+                    <option value="Carrier">Carrier (5)</option>
+                    <option value="Battleship">Battleship (4)</option>
+                    <option value="Destroyer">Destroyer (3)</option>
+                    <option value="Submarine">Submarine (3)</option>
+                    <option value="Patrol">Patrol Boat (2)</option>
+                </select>
+
+                <button type="submit">Choose</button>
+            </form>
+
+            <h3>Press R to rotate the selected ship</h3>
+            <p>Orientation: <span id="alignment">Horizontal</span></p>
+
+            <form id="ship_board_form">
+                <button type="submit">Save ship placement</button>
+            </form>
+        </div>
+
+        <div id="placement_wait">
+            <h2>Ship placement saved!</h2>
+            <p>Waiting for the other player to finish...</p>
+        </div>
+    </section>
+
+    <section id="attacks_board">
+        <h2 id="turn_display"></h2>
+
+        <div id="attacks_grid" class="game_grid">
+            <span></span>
+            <div>1</div>
+            <div>2</div>
+            <div>3</div>
+            <div>4</div>
+            <div>5</div>
+            <div>6</div>
+            <div>7</div>
+            <div>8</div>
+            <div>9</div>
+            <div>10</div>
+
+            <div class="letters">A</div>
+            <div>B</div>
+            <div>C</div>
+            <div>D</div>
+            <div>E</div>
+            <div>F</div>
+            <div>G</div>
+            <div>H</div>
+            <div>I</div>
+            <div>J</div>
+
+            <canvas id="attacks_canvas" width="500" height="500"></canvas>
+        </div>
+
+        <h2>Enemy Ships</h2>
+    </section>
 </body>
 </html>
