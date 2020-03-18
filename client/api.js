@@ -36,7 +36,7 @@ export default class ApiService {
     return await this._postRequest('shipmap', shipMap)
   }
 
-  async getAttacksMap () {
+  async getReceivedHits () {
     return await this._getRequest('attack')
   }
 

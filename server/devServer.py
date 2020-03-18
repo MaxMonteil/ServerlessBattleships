@@ -68,7 +68,7 @@ def api_attack():
     playerID = int(request.args["player"])
 
     if request.method == "GET":
-        return jsonify(games[gameID]["players"][playerID]["attack"]), 200
+        return jsonify(games[gameID]["players"][int(not playerID)]["attack"]), 200
     else:
         if games[gameID]["turn"] == playerID:
             games[gameID]["players"][playerID]["attack"] = request.json
