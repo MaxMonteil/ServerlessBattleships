@@ -35,6 +35,13 @@ export default class ApiService {
     return this.credentials
   }
 
+  quitGame () {
+    const url = this._buildEndpoint('quit_game')
+    url.search = new URLSearchParams(this.credentials).toString()
+
+    navigator.sendBeacon(url, JSON.stringify({ game: this.credentials }))
+  }
+
   async endGame () {
     const url = this._buildEndpoint(RESOURCES.END_GAME)
     url.search = new URLSearchParams(this.credentials).toString()

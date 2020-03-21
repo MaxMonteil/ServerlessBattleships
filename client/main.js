@@ -35,8 +35,4 @@ const attacksBoardData = {
   },
 }
 
-function run () {
-  new Game(detailsNodes, shipBoardData, attacksBoardData).start()
-}
-
-window.onload = run
+window.onload = () => new Game(detailsNodes, shipBoardData, attacksBoardData).start()

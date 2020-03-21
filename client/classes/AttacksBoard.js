@@ -80,7 +80,7 @@ export default class AttacksBoard extends Board {
       this.attackMap.update(Bitmap.OR(this.attackMap, map).bitString)
       super.drawMap(map, { fill: COLORS.DEFAULT })
 
-      await this.api.sendAttack(map.bitString)
+      await this.api.sendAttack(this.attackMap.bitString)
       const enemyShips = new Bitmap(await this.api.getEnemyShipMap())
       this.updateAttackBoard(enemyShips)
 

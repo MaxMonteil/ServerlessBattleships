@@ -30,6 +30,13 @@ export default class Game {
 
       this.gameInfo.innerHTML = `Game: <strong>${gameID}</strong> | Player: <strong>${playerID + 1}</strong>`
 
+      this.window.addEventListener('beforeunload', e => {
+        e.preventDefault()
+        e.returnValue = ''
+      })
+
+      this.window.addEventListener('unload', () => this.api.quitGame())
+
       this.api.pollForPlayers(() => this.startPlacingShips(), { immediate: true })
     } catch (e) {
       console.error(e.message)
