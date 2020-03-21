@@ -25,3 +25,7 @@ tags
 certs/
 .todos.json
 *.vim
+
+# Game save files
+games
+lobby
