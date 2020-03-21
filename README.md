@@ -49,7 +49,7 @@ In the `server` folder run `pipenv run python devServer.py` or start the python 
 * [x] Display grid with HTML canvas
 * [x] Implement game logic
 * [x] Connect 2 players and maintain multiple games
-* [ ] Use files to maintain game state
+* [x] Use files to maintain game state
 * [ ] Deploy server to Azure
 * [ ] Deploy game to Netlify
 
